@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import axios from 'axios';
-import { API_URL, API_KEY } from "utils/constant";
+import { API_URL, API_KEY, LOGIN_TOKEN } from "utils/constant";
 
 export const GlobalContext = createContext();
 export const useGlobalData = () => useContext(GlobalContext);
@@ -16,7 +16,7 @@ const GlobalProvider = ({ children }) => {
     axios.get(API_URL + 'login',
       {
         headers: {
-          Authorization: 'Basic YmcubmV3c3RhcjEyMUBnbWFpbC5jb206T2xla3NhbmRyMTIk'
+          Authorization: 'Basic ' + LOGIN_TOKEN
         }
       }
     ).then((response) => {
