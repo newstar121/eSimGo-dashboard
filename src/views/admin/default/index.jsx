@@ -27,8 +27,12 @@ import {
   Flex,
   FormLabel,
   Icon,
+  Input,
+  InputGroup,
+  InputLeftElement,
   Select,
   SimpleGrid,
+  Text,
   useColorModeValue,
 } from "@chakra-ui/react";
 // Assets
@@ -42,7 +46,10 @@ import {
   MdAddTask,
   MdAttachMoney,
   MdBarChart,
+  MdCalendarMonth,
   MdFileCopy,
+  MdTrendingDown,
+  MdTrendingUp,
 } from "react-icons/md";
 import CheckTable from "views/admin/default/components/CheckTable";
 import ComplexTable from "views/admin/default/components/ComplexTable";
@@ -65,84 +72,99 @@ export default function UserReports() {
   return (
     <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
       <SimpleGrid
-        columns={{ base: 1, md: 2, lg: 3, "2xl": 6 }}
+        columns={{ base: 1, md: 2, lg: 3, "2xl": 3 }}
         gap='20px'
         mb='20px'>
+        {/* Bundle Sold in last...*/}
         <MiniStatistics
-          startContent={
-            <IconBox
-              w='56px'
-              h='56px'
-              bg={boxBg}
-              icon={
-                <Icon w='32px' h='32px' as={MdBarChart} color={brandColor} />
-              }
-            />
-          }
-          name='Earnings'
-          value='$350.4'
-        />
-        <MiniStatistics
-          startContent={
-            <IconBox
-              w='56px'
-              h='56px'
-              bg={boxBg}
-              icon={
-                <Icon w='32px' h='32px' as={MdAttachMoney} color={brandColor} />
-              }
-            />
-          }
-          name='Spend this month'
-          value='$642.39'
-        />
-        <MiniStatistics growth='+23%' name='Sales' value='$574.34' />
-        <MiniStatistics
+        fontSize='10px'
           endContent={
-            <Flex me='-16px' mt='10px'>
-              <FormLabel htmlFor='balance'>
-                <Avatar src={Usa} />
-              </FormLabel>
-              <Select
-                id='balance'
-                variant='mini'
-                mt='5px'
-                me='0px'
-                defaultValue='usd'>
-                <option value='usd'>USD</option>
-                <option value='eur'>EUR</option>
-                <option value='gba'>GBA</option>
-              </Select>
+            <Flex me='0px' mt='15px' align='center'>
+              <MdCalendarMonth size={30} color="blue"></MdCalendarMonth>
             </Flex>
           }
-          name='Your balance'
-          value='$1,000'
-        />
-        <MiniStatistics
-          startContent={
-            <IconBox
-              w='56px'
-              h='56px'
-              bg='linear-gradient(90deg, #4481EB 0%, #04BEFE 100%)'
-              icon={<Icon w='28px' h='28px' as={MdAddTask} color='white' />}
-            />
+          name={
+            <Flex align='center' direction='row'>
+              <Text fontSize='2xl' fontWeight='bold' color='green'>3</Text>
+              <Flex border='1px' borderColor='green' padding='4px' ml='10px' borderRadius='5px'>
+                <MdTrendingUp color="green" fontWeight='bold'></MdTrendingUp>
+                <Text fontSize='md' color='green'>100%</Text>
+              </Flex>
+            </Flex>
           }
-          name='New Tasks'
-          value='154'
+          value='Bundles Sold in last...'
         />
+        {/* Total eSIMs Produced */}
         <MiniStatistics
-          startContent={
-            <IconBox
-              w='56px'
-              h='56px'
-              bg={boxBg}
-              icon={
-                <Icon w='32px' h='32px' as={MdFileCopy} color={brandColor} />
-              }
-            />
+          // endContent={
+          //   <Flex me='0px' mt='15px' align='center'>
+          //     <MdCalendarMonth size={30} color="blue"></MdCalendarMonth>
+          //   </Flex>
+          // }
+          name={
+            <Flex align='center' direction='row'>
+              <Text fontSize='2xl' fontWeight='bold' color='green'>6</Text>
+              <Flex border='1px' borderColor='green' padding='4px' ml='10px' borderRadius='5px'>
+                <MdTrendingUp color="green" fontWeight='bold'></MdTrendingUp>
+                <Text fontSize='md' color='green'>100%</Text>
+              </Flex>
+            </Flex>
           }
-          name='Total Projects'
-          value='2935'
+          value='Total eSIMs Produced'
+        />
+        {/* eSIMs Produced this... */}
+        <MiniStatistics
+          // endContent={
+          //   <Flex me='0px' mt='15px' align='center'>
+          //     <MdCalendarMonth size={30} color="blue"></MdCalendarMonth>
+          //   </Flex>
+          // }
+          name={
+            <Flex align='center' direction='row'>
+              <Text fontSize='2xl' fontWeight='bold' color='green'>6</Text>
+              <Flex border='1px' borderColor='green' padding='4px' ml='10px' borderRadius='5px'>
+                <MdTrendingUp color="green" fontWeight='bold'></MdTrendingUp>
+                <Text fontSize='md' color='green'>100%</Text>
+              </Flex>
+            </Flex>
+          }
+          value='eSIMs Produced this...'
+        />
+        {/* Bundles in inventory */}
+        <MiniStatistics
+          // endContent={
+          //   <Flex me='0px' mt='15px' align='center'>
+          //     <MdCalendarMonth size={30} color="blue"></MdCalendarMonth>
+          //   </Flex>
+          // }
+          name={
+            <Flex align='center' direction='row'>
+              <Text fontSize='2xl' fontWeight='bold' color='green'>0</Text>
+              {/* <Flex border='1px' borderColor='green' padding='4px' ml='10px' borderRadius='5px'>
+                <MdTrendingUp color="green" fontWeight='bold'></MdTrendingUp>
+                <Text fontSize='md' color='green'>100%</Text>
+              </Flex> */}
+            </Flex>
+          }
+          value='Bundles in inventory'
+        />
+        {/* Top-Up Bundles applied */}
+        <MiniStatistics
+          // endContent={
+          //   <Flex me='0px' mt='15px' align='center'>
+          //     <MdCalendarMonth size={30} color="blue"></MdCalendarMonth>
+          //   </Flex>
+          // }
+          name={
+            <Flex align='center' direction='row'>
+              <Text fontSize='2xl' fontWeight='bold' color='green'>0</Text>
+              <Flex border='1px' borderColor='green' padding='4px' ml='10px' borderRadius='5px'>
+                <MdTrendingDown color="green" fontWeight='bold'></MdTrendingDown>
+                <Text fontSize='md' color='green'>0%</Text>
+              </Flex>
+            </Flex>
+          }
+          value='Top-Up Bundles applied...'
         />
       </SimpleGrid>
 

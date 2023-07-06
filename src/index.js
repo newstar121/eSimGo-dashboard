@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { createContext } from 'react';
 import ReactDOM from 'react-dom';
 import 'assets/css/App.css';
 import { HashRouter, Route, Switch, Redirect } from 'react-router-dom';
@@ -8,21 +8,25 @@ import RtlLayout from 'layouts/rtl';
 import { ChakraProvider } from '@chakra-ui/react';
 import theme from 'theme/theme';
 import { ThemeEditorProvider } from '@hypertheme-editor/chakra-ui';
+import AppProvider from './contexts/AppContext';
 
 ReactDOM.render(
-	<ChakraProvider theme={theme}>
-		<React.StrictMode>
-			<ThemeEditorProvider>
-				<HashRouter>
-					<Switch>
-						<Route path={`/auth`} component={AuthLayout} />
-						<Route path={`/admin`} component={AdminLayout} />
-						<Route path={`/rtl`} component={RtlLayout} />
-						<Redirect from='/' to='/admin' />
-					</Switch>
-				</HashRouter>
-			</ThemeEditorProvider>
-		</React.StrictMode>
-	</ChakraProvider>,
+	<AppProvider>
+		<ChakraProvider theme={theme}>
+			<React.StrictMode>
+				<ThemeEditorProvider>
+					<HashRouter>
+						<Switch>
+							<Route path={`/auth`} component={AuthLayout} />
+							<Route path={`/admin`} component={AdminLayout} />
+							<Route path={`/rtl`} component={RtlLayout} />
+							<Redirect from='/' to='/admin' />
+						</Switch>
+					</HashRouter>
+				</ThemeEditorProvider>
+			</React.StrictMode>
+		</ChakraProvider>
+	</AppProvider>,
+
 	document.getElementById('root')
 );

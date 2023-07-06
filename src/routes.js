@@ -2,11 +2,12 @@ import React from "react";
 
 import { Icon } from "@chakra-ui/react";
 import {
-  MdBarChart,
-  MdPerson,
-  MdHome,
-  MdLock,
-  MdOutlineShoppingCart,
+  MdDashboard,
+  MdAccountBalanceWallet,
+  MdInventory,
+  MdViewKanban,
+  MdLogout,
+  MdAddCircleOutline,
 } from "react-icons/md";
 
 // Admin Imports
@@ -18,22 +19,23 @@ import RTL from "views/admin/rtl";
 
 // Auth Imports
 import SignInCentered from "views/auth/signIn";
+import { IoAddCircleOutline } from "react-icons/io5";
 
 const routes = [
   {
-    name: "Main Dashboard",
+    name: "DASHBOARD",
     layout: "/admin",
     path: "/default",
-    icon: <Icon as={MdHome} width='20px' height='20px' color='inherit' />,
+    icon: <Icon as={MdDashboard} width='20px' height='20px' color='inherit' />,
     component: MainDashboard,
   },
   {
-    name: "NFT Marketplace",
+    name: "BUY DATA BUNDLES",
     layout: "/admin",
     path: "/nft-marketplace",
     icon: (
       <Icon
-        as={MdOutlineShoppingCart}
+        as={MdAddCircleOutline}
         width='20px'
         height='20px'
         color='inherit'
@@ -43,32 +45,32 @@ const routes = [
     secondary: true,
   },
   {
-    name: "Data Tables",
+    name: "TOP-UP ACCOUNT",
     layout: "/admin",
-    icon: <Icon as={MdBarChart} width='20px' height='20px' color='inherit' />,
+    icon: <Icon as={MdAccountBalanceWallet} width='20px' height='20px' color='inherit' />,
     path: "/data-tables",
     component: DataTables,
   },
   {
-    name: "Profile",
+    name: "BUNDLE INVENTORY",
     layout: "/admin",
     path: "/profile",
-    icon: <Icon as={MdPerson} width='20px' height='20px' color='inherit' />,
+    icon: <Icon as={MdInventory} width='20px' height='20px' color='inherit' />,
     component: Profile,
   },
   {
-    name: "Sign In",
+    name: "VIEW eSIMS",
     layout: "/auth",
     path: "/sign-in",
-    icon: <Icon as={MdLock} width='20px' height='20px' color='inherit' />,
+    icon: <Icon as={MdViewKanban} width='20px' height='20px' color='inherit' />,
     component: SignInCentered,
   },
   {
-    name: "RTL Admin",
-    layout: "/rtl",
-    path: "/rtl-default",
-    icon: <Icon as={MdHome} width='20px' height='20px' color='inherit' />,
-    component: RTL,
+    name: "LOG OUT",
+    layout: "/admin",
+    path: "/sign-in",
+    icon: <Icon as={MdLogout} width='20px' height='20px' color='inherit' />,
+    component: SignInCentered,
   },
 ];
 

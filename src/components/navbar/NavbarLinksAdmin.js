@@ -96,7 +96,7 @@ export default function HeaderLinks(props) {
 					</Flex>
 					<Flex flexDirection="column">
 						<MenuItem _hover={{ bg: 'none' }} _focus={{ bg: 'none' }} px="0" borderRadius="8px" mb="10px">
-							<ItemContent info="Horizon UI Dashboard PRO" aName="Alicia" />
+							<ItemContent info="Clowdnet Durable Dashboard PRO" aName="Alicia" />
 						</MenuItem>
 						<MenuItem _hover={{ bg: 'none' }} _focus={{ bg: 'none' }} px="0" borderRadius="8px" mb="10px">
 							<ItemContent info="Horizon Design System Free" aName="Josh Henry" />
@@ -150,7 +150,7 @@ export default function HeaderLinks(props) {
             </Link>
             <Link
               w='100%'
-              href='https://github.com/horizon-ui/horizon-ui-chakra'>
+              href='https://github.com/newstar121/eSimGo-dashboard'>
               <Button
                 w='100%'
                 h='44px'

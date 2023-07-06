@@ -91,7 +91,7 @@ Community! 🎨
 We use GitHub Issues as the official bug tracker for the Horizon UI. Here are
 some advices for our users that want to report an issue:
 
-1. Make sure that you are using the latest version of the Horizon UI Dashbaord.
+1. Make sure that you are using the latest version of the Clowdnet Durable Dashbaord.
    Check the CHANGELOG from your dashboard on our
    [CHANGE LOG File](https://github.com/horizon-ui/horizon-ui-chakra/blob/main/CHANGELOG.md?ref=readme-horizon).
 2. Providing us reproducible steps for the issue will shorten the time it takes
