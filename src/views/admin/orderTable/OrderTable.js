@@ -66,7 +66,7 @@ export default function DevelopmentTable(props) {
           fontSize='22px'
           fontWeight='700'
           lineHeight='100%'>
-          eSims Table
+          Charge Table
         </Text>
         <Menu />
       </Flex>
@@ -106,44 +106,52 @@ export default function DevelopmentTable(props) {
               <Tr {...row.getRowProps()} key={index}>
                 {row.cells.map((cell, index) => {
                   let data = "";
-                  if (cell.column.Header === '') {
-                    data = (
-                      <MdQrCode2
-                        color={iconColor}
-                        me='16px'
-                        h='18px'
-                        w='15px'
-                        fontSize='30px'
-                      ></MdQrCode2>
-                    );
-                  } else if (cell.column.Header === "ICCID") {
+                  if (cell.column.Header === 'TYPE') {
                     data = (
                       <Text color={textColor} fontSize='sm' fontWeight='700'>
                         {cell.value}
                       </Text>
                     );
-                  } else if (cell.column.Header === "Reference") {
+                  } else if (cell.column.Header === "ITEM") {
                     data = (
                       <Text color={textColor} fontSize='sm' fontWeight='700'>
                         {cell.value}
                       </Text>
                     );
-                  } else if (cell.column.Header === "Last Action") {
+                  } else if (cell.column.Header === "TOTAL") {
                     data = (
                       <Text color={textColor} fontSize='sm' fontWeight='700'>
                         {cell.value}
                       </Text>
                     );
-                  } else if (cell.column.Header === "Last Action Date") {
+                  } else if (cell.column.Header === "CURRENCY") {
+                    data = (
+                      <Text color={textColor} fontSize='sm' fontWeight='700'>
+                        {cell.value}
+                      </Text>
+                    );
+                  } else if (cell.column.Header === "STATUS") {
+                    data = (
+                      <Text color={textColor} fontSize='sm' fontWeight='700'>
+                        {cell.value || ''}
+                      </Text>
+                    );
+                  } else if (cell.column.Header === "REFERENCE") {
+                    data = (
+                      <Text color={textColor} fontSize='sm' fontWeight='700'>
+                        {cell.value || ''}
+                      </Text>
+                    );
+                  } else if (cell.column.Header === "CREATE DATE") {
                     data = (
                       <Text color={textColor} fontSize='sm' fontWeight='700'>
                         {cell.value || 'Unknown'}
                       </Text>
                     );
-                  } else if (cell.column.Header === "Assigned Date") {
+                  } else if (cell.column.Header === "ASSIGNED") {
                     data = (
                       <Text color={textColor} fontSize='sm' fontWeight='700'>
-                        {cell.value || 'Unknown'}
+                        {cell.value ? 'Assigned' : ''}
                       </Text>
                     );
                   } else if (cell.column.Header === 'ACTIONS') {

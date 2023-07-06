@@ -19,6 +19,7 @@ import NFTMarketplace from "views/admin/marketplace";
 import Profile from "views/admin/profile";
 import DataTables from "views/admin/dataTables";
 import SimsTable from "views/admin/simsTables";
+import OrderTable from "views/admin/orderTable";
 import RTL from "views/admin/rtl";
 
 // Auth Imports
@@ -74,7 +75,7 @@ const routes = [
     layout: "/admin",
     path: "/charge",
     icon: <Icon as={MdCreditCard} width='20px' height='20px' color='inherit' />,
-    component: DataTables,
+    component: OrderTable,
   },
   {
     name: "REPORTS",

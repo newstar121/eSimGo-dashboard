@@ -22,7 +22,7 @@
 
 // Chakra imports
 import { Box } from "@chakra-ui/react";
-import SimTable from "views/admin/simsTables/SimTable";
+import OrderTable from "views/admin/orderTable/OrderTable";
 import React from "react";
 import { useEffect } from "react";
 import axios from "axios";
@@ -32,28 +32,36 @@ import { API_KEY } from "utils/constant";
 
 const columns = [
   {
-    Header: '',
-    accessor: 'id'
+    Header: "TYPE",
+    accessor: "charge_type",
   },
   {
-    Header: "ICCID",
-    accessor: "iccid",
+    Header: "ITEM",
+    accessor: "item",
   },
   {
-    Header: "Reference",
-    accessor: "customerRef",
+    Header: "TOTAL",
+    accessor: "total",
   },
   {
-    Header: "Last Action",
-    accessor: "lastAction",
+    Header: "CURRENCY",
+    accessor: "currency",
   },
   {
-    Header: "Last Action Date",
-    accessor: "actionDate",
+    Header: "STATUS",
+    accessor: "status",
   },
   {
-    Header: "Assigned Date",
-    accessor: "assignedDate",
+    Header: "REFERENCE",
+    accessor: "charge_reference",
+  },
+  {
+    Header: "CREATE DATE",
+    accessor: "createDate",
+  },
+  {
+    Header: "ASSIGNED",
+    accessor: "assigned",
   },
   {
     Header: "ACTIONS",
@@ -63,13 +71,13 @@ const columns = [
 
 export default function Settings() {
 
-  const [simData, setSimData] = useState([])
+  const [chargeData, setChargeData] = useState([])
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     let config = {
       method: 'get',
-      url: API_URL + 'esims',
+      url: API_URL + 'orders',
       headers: {
         'X-API-Key': API_KEY
       }
@@ -80,10 +88,21 @@ export default function Settings() {
       .then((response) => {
         if (response.data) {
           let result = []
-          for (let i = 0; i < response.data.esims.length; i++) {
-            result.push(Object.assign({}, response.data.esims[i], { id: i }))
+          for (let i = 0; i < response.data.orders.length; i++) {
+            let order = response.data.orders[i]
+            let tempObj = {
+              charge_type: order.order[0].type || 'UNKNOWN',
+              item: order.order[0].item || '',
+              total: order.total || 0,
+              currency: order.currency || '',
+              status: order.status || '',
+              charge_reference: order.orderReference || '',
+              createDate: order.createDate || 'UNKNOWN',
+              assigned: order.assigned || false
+            }
+            result.push(Object.assign({}, tempObj))
           }
-          setSimData(result)
+          setChargeData(result)
         }
         setIsLoading(false)
       })
@@ -95,9 +114,9 @@ export default function Settings() {
   // Chakra Color Mode
   return (
     <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
-      <SimTable
+      <OrderTable
         columnsData={columns}
-        tableData={simData}
+        tableData={chargeData}
         isLoading={isLoading}
       />
     </Box>
