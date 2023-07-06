@@ -20,12 +20,12 @@ function SidebarContent(props) {
         </Box>
       </Stack>
 
-      <Box
+      {/* <Box
         mt='60px'
         mb='40px'
         borderRadius='30px'>
         <SidebarCard />
-      </Box>
+      </Box> */}
     </Flex>
   );
 }
