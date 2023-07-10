@@ -29,12 +29,13 @@ import axios from "axios";
 import { useState } from "react";
 import { API_URL } from "utils/constant";
 import { API_KEY } from "utils/constant";
+import { isThisYear, isThisMonth, getDate, isSameYear, isSameMonth, differenceInDays } from "date-fns";
 
 const columns = [
-  {
-    Header: '',
-    accessor: 'id'
-  },
+  // {
+  //   Header: '',
+  //   accessor: 'id'
+  // },
   {
     Header: "ICCID",
     accessor: "iccid",
@@ -56,15 +57,27 @@ const columns = [
     accessor: "assignedDate",
   },
   {
-    Header: "ACTIONS",
-    accessor: "action",
+    Header: "Country",
+    accessor: "country",
   },
+  {
+    Header: "Total Data/Remaining Data",
+    accessor: 'dataUsage'
+  },
+  {
+    Header: "Expire Date",
+    accessor: 'expireDate'
+  }
 ];
 
 export default function Settings() {
 
   const [simData, setSimData] = useState([])
+  const [_simData, _setSimData] = useState([])
   const [isLoading, setIsLoading] = useState(false)
+
+  const [year, setYear] = useState((new Date()).getFullYear())
+  const [month, setMonth] = useState((new Date()).getMonth())
 
   useEffect(() => {
     let config = {
@@ -80,10 +93,19 @@ export default function Settings() {
       .then((response) => {
         if (response.data) {
           let result = []
+          let no = 1;
           for (let i = 0; i < response.data.esims.length; i++) {
-            result.push(Object.assign({}, response.data.esims[i], { id: i }))
+            let currentDate = new Date(year, month);
+            let actionDate = (new Date(response.data.esims[i].actionDate))
+
+            if (isSameYear(actionDate, currentDate) &&
+              isSameMonth(actionDate, currentDate)) {
+              result.push(Object.assign({}, response.data.esims[i], { id: no }))
+              no++
+            }
           }
           setSimData(result)
+          _setSimData(result)
         }
         setIsLoading(false)
       })
@@ -91,13 +113,73 @@ export default function Settings() {
         console.log(error);
         setIsLoading(false)
       });
-  }, [])
+  }, [year, month])
+
+  useEffect(async () => {
+    let newResult = [];
+    for (let i = 0; i < simData.length; i++) {
+      let iccid = simData[i].iccid;
+      // get location info
+      let response = await axios.get(
+        API_URL + 'esims/' + iccid + '/location',
+        {
+          params: {
+            iccid: iccid
+          },
+          headers: {
+            'X-API-Key': API_KEY,
+            Authorization: 'Bearer ' + window.localStorage.getItem('refreshToken')
+          }
+        });
+
+      let locationInfo = response.data;
+      let country = locationInfo.country || '';
+
+      response = await axios.get(
+        API_URL + 'esims/' + iccid + '/bundles',
+        {
+          params: {
+            iccid: iccid,
+            includeUsed: false
+          },
+          headers: {
+            'X-API-Key': API_KEY,
+            Authorization: 'Bearer ' + window.localStorage.getItem('refreshToken')
+          }
+        });
+
+      let bundles = response.data.bundles;
+      let initialQuantity = bundles?.[0].assignments?.[0].initialQuantity;
+      let remainingQuantity = bundles?.[0].assignments?.[0]?.remainingQuantity;
+      let endTime = bundles?.[0].assignments?.[0]?.endTime;
+
+      newResult.push(
+        Object.assign({}, simData[i], {
+          country: country,
+          dataUsage: (initialQuantity / Math.pow(10, 9)) + 'GB / ' + (remainingQuantity / Math.pow(10, 9)).toFixed(2) + 'GB',
+          expireDate: differenceInDays(new Date(endTime), new Date()) + 'Days Left',
+        })
+      )
+    }
+    _setSimData(newResult);
+  }, [simData])
+
+  const handleYear = (year) => {
+    setYear(year)
+  }
+
+  const handleMonth = (month) => {
+    setMonth(month)
+  }
+
   // Chakra Color Mode
   return (
     <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
       <SimTable
+        handleYear={handleYear}
+        handleMonth={handleMonth}
         columnsData={columns}
-        tableData={simData}
+        tableData={_simData || []}
         isLoading={isLoading}
       />
     </Box>

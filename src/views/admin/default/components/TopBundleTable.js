@@ -25,6 +25,7 @@ import Menu from "components/menu/MainMenu";
 
 // Assets
 import { MdCheckCircle, MdCancel, MdOutlineError, MdArrowRight, MdFileDownload } from "react-icons/md";
+import { CSVLink } from "react-csv";
 export default function ColumnsTable(props) {
   const { columnsData, tableData } = props;
 
@@ -53,6 +54,16 @@ export default function ColumnsTable(props) {
 
   const textColor = useColorModeValue("secondaryGray.900", "white");
   const borderColor = useColorModeValue("gray.200", "whiteAlpha.100");
+
+  const csvReport = {
+    data: data,
+    headers: [
+      {label: 'Top Bundles Purchased', key: 'bundleAlias'},
+      {label: 'Count', key: 'bundlesSold'}
+    ],
+    filename: 'Top_Bundles_Purchased_this_month.csv'
+  };
+
   return (
     <Card
       direction='column'
@@ -68,7 +79,8 @@ export default function ColumnsTable(props) {
         </Text>
         <Flex align='center'>
           <MdFileDownload color="blue" fontWeight='bold'></MdFileDownload>
-          <Text fontSize='md' color='black' fontWeight='700'>Export</Text>
+          {/* <Text fontSize='md' color='black' fontWeight='700'>Export</Text> */}
+          <CSVLink {...csvReport} style={{fontSize: 16, color:'black', fontWeight:'700'}}>Export</CSVLink>
         </Flex>
       </Flex>
       <Table {...getTableProps()} variant='simple' color='gray.500' mb='24px'>
