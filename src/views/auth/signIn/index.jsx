@@ -21,7 +21,7 @@
 
 */
 
-import React from "react";
+import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 // Chakra imports
 import {
@@ -47,6 +47,8 @@ import illustration from "assets/img/auth/auth.png";
 import { FcGoogle } from "react-icons/fc";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { RiEyeCloseLine } from "react-icons/ri";
+import { useHistory } from "react-router-dom";
+import { USER_ROLE } from "utils/constant";
 
 function SignIn() {
   // Chakra color mode
@@ -67,6 +69,31 @@ function SignIn() {
   );
   const [show, setShow] = React.useState(false);
   const handleClick = () => setShow(!show);
+
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+
+  const history = useHistory()
+
+  const onSignIn = () => {
+
+    window.localStorage.removeItem('user.role')
+
+    if (email === 'comp@ny.com' && password === '123456') {
+      window.localStorage.setItem('user.role', USER_ROLE.company)
+    } else if (email === 'resell@er.com' && password === '123456') {
+      window.localStorage.setItem('user.role', USER_ROLE.reseller)
+    } else if (email === 'end@user.com' && password === '123456') {
+      window.localStorage.setItem('user.role', USER_ROLE.user)
+    }
+
+    if (window.localStorage.getItem('user.role')) {
+      history.push('/admin/dashboard')
+    } else {
+      history.push('/')
+    }
+  }
+
   return (
     <DefaultAuth illustrationBackground={illustration} image={illustration}>
       <Flex
@@ -139,6 +166,8 @@ function SignIn() {
             </FormLabel>
             <Input
               isRequired={true}
+              value={email}
+              onChange={(e) => {setEmail(e.target.value)}}
               variant='auth'
               fontSize='sm'
               ms={{ base: "0px", md: "0px" }}
@@ -159,6 +188,8 @@ function SignIn() {
             <InputGroup size='md'>
               <Input
                 isRequired={true}
+                value={password}
+                onChange={(e) => {setPassword(e.target.value)}}
                 fontSize='sm'
                 placeholder='Min. 8 characters'
                 mb='24px'
@@ -207,7 +238,9 @@ function SignIn() {
               fontWeight='500'
               w='100%'
               h='50'
-              mb='24px'>
+              mb='24px'
+              onClick={() => { onSignIn() }}
+            >
               Sign In
             </Button>
           </FormControl>

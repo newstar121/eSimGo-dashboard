@@ -17,6 +17,15 @@ class ColumnChart extends Component {
     });
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (this.props !== nextProps) {
+      this.setState({
+        chartData: nextProps.chartData,
+        chartOptions: nextProps.chartOptions,
+      })
+    }
+  }
+
   render() {
     return (
       <Chart

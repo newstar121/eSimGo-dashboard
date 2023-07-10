@@ -6,3 +6,11 @@ body {
 option {
   color: black;
 }
+
+.icon-hover:hover {
+  cursor: pointer;
+}
+
+.overflow-ellipsis {
+  text-overflow: ellipsis;
+}

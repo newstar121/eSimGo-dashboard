@@ -21,7 +21,7 @@ import DataTables from "views/admin/dataTables";
 import SimsTable from "views/admin/simsTables";
 import OrderTable from "views/admin/orderTable";
 import RTL from "views/admin/rtl";
-
+import Setting from "views/admin/setting";
 // Auth Imports
 import SignInCentered from "views/auth/signIn";
 import { IoAddCircleOutline } from "react-icons/io5";
@@ -30,7 +30,7 @@ const routes = [
   {
     name: "DASHBOARD",
     layout: "/admin",
-    path: "/default",
+    path: "/dashboard",
     icon: <Icon as={MdDashboard} width='20px' height='20px' color='inherit' />,
     component: MainDashboard,
   },
@@ -56,13 +56,14 @@ const routes = [
   //   path: "/data-tables",
   //   component: DataTables,
   // },
-  // {
-  //   name: "BUNDLE INVENTORY",
-  //   layout: "/admin",
-  //   path: "/profile",
-  //   icon: <Icon as={MdInventory} width='20px' height='20px' color='inherit' />,
-  //   component: Profile,
-  // },
+  {
+    name: "EDIT PROFILE",
+    layout: "/admin",
+    path: "/profile",
+    icon: <Icon as={MdInventory} width='20px' height='20px' color='inherit' />,
+    component: Setting,
+    hidden: true
+  },
   {
     name: "VIEW eSIMS",
     layout: "/admin",

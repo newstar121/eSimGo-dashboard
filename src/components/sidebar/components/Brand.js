@@ -9,10 +9,13 @@ import { HSeparator } from "components/separator/Separator";
 import {
   MdApartment, MdSettings, MdAccountBalanceWallet,
 } from "react-icons/md";
+import { useHistory } from 'react-router-dom'
 
 export function SidebarBrand() {
   //   Chakra color mode
   // let logoColor = useColorModeValue("navy.700", "white");
+
+  const history = useHistory()
 
   return (
     <Flex align='center' direction='column'>
@@ -26,7 +29,7 @@ export function SidebarBrand() {
             <Text fontSize='2xl'>${175}</Text>
           </Flex>
         </Flex>
-        <Icon as={MdSettings} width='25px' height='25px' color='inherit' />
+        <Icon as={MdSettings} width='25px' height='25px' color='inherit' className="icon-hover" onClick={() => {history.push('/admin/profile')}}/>
       </Flex>
       <HSeparator mb='20px' mt='10px' />
     </Flex>
