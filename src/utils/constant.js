@@ -7,3 +7,35 @@ export const USER_ROLE = {
     reseller: 'reseller',
     user: 'user',
 }
+
+export const DISPLAY_TYPE = {
+    cost: 'cost',
+    quantity: 'quantity'
+}
+
+export const DISPLAY_TYPE_NAME = {
+    cost: 'Cost',
+    quantity: 'Quantity'
+}
+
+export const REGION_TYPE = {
+    all: 'all',
+    africa: 'africa',
+    asia: 'asia',
+    Europe: 'Europe',
+    north: 'north',
+    oceania: 'oceania',
+    africa: 'africa',
+    south: 'south',
+}
+
+export const REGION_TYPE_NAME = {
+    all: 'All Regions',
+    africa: 'Africa',
+    asia: 'Asia',
+    Europe: 'Europe',
+    north: 'North America',
+    oceania: 'Oceania',
+    africa: 'Africa',
+    south: 'South America',
+}

@@ -18,6 +18,15 @@ class PieChart extends React.Component {
     });
   }
 
+  componentWillReceiveProps(newProps) {
+    if (this.props !== newProps) {
+      this.setState({
+        chartData: newProps.chartData,
+        chartOptions: newProps.chartOptions,
+      });
+    }
+  }
+
   render() {
     return (
       <ReactApexChart
@@ -25,7 +34,7 @@ class PieChart extends React.Component {
         series={this.state.chartData}
         type='pie'
         width='100%'
-        height='55%'
+        height='100%'
       />
     );
   }

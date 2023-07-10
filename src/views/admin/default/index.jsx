@@ -55,11 +55,11 @@ import {
 } from "react-icons/md";
 import { API_URL, API_KEY } from "utils/constant";
 import CheckTable from "views/admin/default/components/CheckTable";
-import ComplexTable from "views/admin/default/components/ComplexTable";
+import TopBundleTable from "views/admin/default/components/TopBundleTable";
 import DailyTraffic from "views/admin/default/components/DailyTraffic";
 import PieCard from "views/admin/default/components/PieCard";
 import Tasks from "views/admin/default/components/Tasks";
-import TotalSpent from "views/admin/default/components/TotalSpent";
+import CostOfBundle from "views/admin/default/components/CostOfBundle";
 import WeeklyRevenue from "views/admin/default/components/WeeklyRevenue";
 import {
   columnsDataCheck,
@@ -67,6 +67,17 @@ import {
 } from "views/admin/default/variables/columnsData";
 import tableDataCheck from "views/admin/default/variables/tableDataCheck.json";
 import tableDataComplex from "views/admin/default/variables/tableDataComplex.json";
+
+const columns = [
+  {
+    Header: "Content",
+    accessor: "bundleAlias",
+  },
+  {
+    Header: "Count",
+    accessor: "bundlesSold",
+  }
+]
 
 export default function UserReports() {
   // Chakra Color Mode
@@ -100,10 +111,8 @@ export default function UserReports() {
   const [previousPeriodTopUpsAtLeastOneApply, setPreviousPeriodTopUpsAtLeastOneApply] = useState(0)
   const [percentageDifferenceAtLeastOneApply, setPercentageDifferenceAtLeastOneApply] = useState(0)
 
-  // const [thisPeriodBundlesSold, setThisPeriodBundlesSold] = useState([])
-  // const [previousPeriodBundlesSold, setPreviousPeriodBundlesSold] = useState([])
-
-  const [bundlesPerRegion, setBundlesPerRegion] = useState(null)
+  const [thisPeriodBundlesSold, setThisPeriodBundlesSold] = useState([])
+  const [previousPeriodBundlesSold, setPreviousPeriodBundlesSold] = useState([])
 
   // TOTAL BUNDLES SOLD
   const getTotalBundlesSold = (filterBy = null) => {
@@ -230,43 +239,22 @@ export default function UserReports() {
   }
 
   // BUNDLES SOLD BY COUNTRY
-  // const getBundlesSoldByCountry = (filterBy = null) => {
-  //   axios.post(
-  //     API_URL + 'dashboard/charts', {
-  //     "filterBy": filterBy,
-  //     "monthEnd": null,
-  //     "monthStart": null,
-  //     "subType": "bundles",
-  //     "type": "bundlesSoldByCountry"
-  //   }, {
-  //     headers: {
-  //       'X-API-Key': API_KEY,
-  //       Authorization: 'Bearer ' + window.localStorage.getItem('refreshToken')
-  //     }
-  //   }).then(function (response) {
-  //     setThisPeriodBundlesSold(response.data.thisPeriodBundlesSold)
-  //     setPreviousPeriodBundlesSold(response.data.previousPeriodBundlesSold)
-  //   }).catch(function (error) {
-  //     console.log(error);
-  //   });
-  // }
-
-  // BUNDLES PURCHASED BY REGION
-  const getBundlesPurchasedByRegion = () => {
+  const getBundlesSoldByCountry = (filterBy = null) => {
     axios.post(
       API_URL + 'dashboard/charts', {
-      "filterBy": "0",
+      "filterBy": filterBy,
       "monthEnd": null,
       "monthStart": null,
-      "subType": null,
-      "type": "bundlesPurchasedByRegion"
+      "subType": "bundles",
+      "type": "bundlesSoldByCountry"
     }, {
       headers: {
         'X-API-Key': API_KEY,
         Authorization: 'Bearer ' + window.localStorage.getItem('refreshToken')
       }
     }).then(function (response) {
-      setBundlesPerRegion(response.data.bundlesPerRegion)
+      setThisPeriodBundlesSold(response.data.thisPeriodBundlesSold)
+      setPreviousPeriodBundlesSold(response.data.previousPeriodBundlesSold)
     }).catch(function (error) {
       console.log(error);
     });
@@ -293,10 +281,10 @@ export default function UserReports() {
     getTopUps()
 
     // BUNDLES SOLD BY COUNTRY
-    // getBundlesSoldByCountry()
+    getBundlesSoldByCountry("CalendarMonth")
 
     // BUNDLES PURCHASED BY REGION
-    getBundlesPurchasedByRegion()
+    // getBundlesPurchasedByRegion()
 
   }, [])
 
@@ -499,19 +487,16 @@ export default function UserReports() {
       <SimpleGrid columns={{ base: 1, md: 1, xl: 2 }} gap='20px' mb='20px'>
         {/* <CheckTable columnsData={columnsDataCheck} tableData={tableDataCheck} />
         <SimpleGrid columns={{ base: 1, md: 2, xl: 2 }} gap='20px'> */}
-          <DailyTraffic/>
-          <PieCard />
+        <DailyTraffic />
+        <TopBundleTable
+          columnsData={columns}
+          tableData={thisPeriodBundlesSold}
+        />
         {/* </SimpleGrid> */}
       </SimpleGrid>
       <SimpleGrid columns={{ base: 1, md: 1, xl: 2 }} gap='20px' mb='20px'>
-        <ComplexTable
-          columnsData={columnsDataComplex}
-          tableData={tableDataComplex}
-        />
-        <SimpleGrid columns={{ base: 1, md: 2, xl: 2 }} gap='20px'>
-          <Tasks />
-          <MiniCalendar h='100%' minW='100%' selectRange={false} />
-        </SimpleGrid>
+        <CostOfBundle />
+        <PieCard />
       </SimpleGrid>
     </Box>
   );

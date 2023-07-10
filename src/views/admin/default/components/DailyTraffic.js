@@ -95,13 +95,13 @@ export default function DailyTraffic(props) {
   return (
     <Card align='center' direction='column' w='100%' {...rest}>
       <Flex justify='space-between' align='start' px='10px' pt='5px'>
-        <Flex flexDirection='column' align='start' me='20px'>
+        <Flex flexDirection='column' align='start' justify='center' me='20px'>
           <Flex w='100%'>
             <Text
               me='auto'
-              color='secondaryGray.600'
-              fontSize='sm'
-              fontWeight='500'>
+              color='black'
+              fontSize='lg'
+              fontWeight='700'>
               Top Bundles Sold by Country
             </Text>
           </Flex>
@@ -127,7 +127,7 @@ export default function DailyTraffic(props) {
           <Text color='green.500' fontSize='sm' fontWeight='700'>
             +2.45%
           </Text> */}
-          <Text color='green.500' fontSize='sm' fontWeight='700'>
+          <Text color='black' fontSize='md' fontWeight='700'>
             Showing last 30 days
           </Text>
           {showBundles ? (
