@@ -1,17 +1,67 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useReducer, useState } from "react";
 import axios from 'axios';
 import { API_URL, API_KEY, LOGIN_TOKEN } from "utils/constant";
+
+const UPDATE = 'UPDATE'
+const UPDATE_VIEW_ESIMS = 'UPDATE_VIEW_ESIMS'
+
+function reducer(state, { type, payload }) {
+  
+  switch (type) {
+    
+    case UPDATE: {
+      const { data } = payload
+      return {
+        ...state,
+        data,
+      }
+    }
+
+    case UPDATE_VIEW_ESIMS: {
+      const { eSimData } = payload
+      return {
+        ...state,
+        eSimData,
+      }
+    }
+
+    default: {
+      throw Error(`Unexpected action type in DataContext reducer: '${type}'.`)
+    }
+  }
+}
 
 export const GlobalContext = createContext();
 export const useGlobalData = () => useContext(GlobalContext);
 
 const GlobalProvider = ({ children }) => {
 
+  const [state, dispatch] = useReducer(reducer, {})
+
+  const update = useCallback((data) => {
+    dispatch({
+      type: UPDATE,
+      payload: {
+        data,
+      },
+    })
+  }, [])
+
+  const updateViewESims = useCallback((data) => {
+    dispatch({
+      type: UPDATE_VIEW_ESIMS,
+      payload: {
+        eSimData: data,
+      },
+    })
+  }, [])
+
   const [data, setData] = useState({
     organizations: [],
     user: {},
     groups: []
   })
+
   useEffect(() => {
     axios.get(API_URL + 'login',
       {
@@ -73,10 +123,21 @@ const GlobalProvider = ({ children }) => {
     })
   }, [])
 
-
   return (
     <GlobalContext.Provider
-      value={data}>
+      value={useMemo(
+        () => [
+          state,
+          {
+            update,
+            update
+          }
+        ],
+        [
+          state,
+          update,
+        ]
+      )}>
       {children}
     </GlobalContext.Provider>
   );
