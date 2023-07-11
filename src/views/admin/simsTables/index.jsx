@@ -30,6 +30,8 @@ import { useState } from "react";
 import { API_URL } from "utils/constant";
 import { API_KEY } from "utils/constant";
 import { isThisYear, isThisMonth, getDate, isSameYear, isSameMonth, differenceInDays } from "date-fns";
+import { useGlobalData } from "contexts/AppContext";
+import { getViewESimsData } from "contexts/AppContext";
 
 const columns = [
   // {
@@ -72,83 +74,21 @@ const columns = [
 
 export default function Settings() {
 
-  const [simData, setSimData] = useState([])
-  const [_simData, _setSimData] = useState([])
   const [isLoading, setIsLoading] = useState(false)
 
   const [year, setYear] = useState((new Date()).getFullYear())
   const [month, setMonth] = useState((new Date()).getMonth())
 
+  const [state, { updateViewESims }] = useGlobalData();
+
+  const simData = state?.eSimData || [];
+
   useEffect(() => {
-    let config = {
-      method: 'get',
-      url: API_URL + 'esims',
-      headers: {
-        'X-API-Key': API_KEY
-      }
-    };
-
-    axios(config)
-      .then(async (response) => {
-        if (response.data) {
-          let result = []
-          let no = 1;
-          for (let i = 0; i < response.data.esims.length; i++) {
-            let currentDate = new Date(year, month);
-            let actionDate = (new Date(response.data.esims[i].actionDate))
-
-            if (isSameYear(actionDate, currentDate) &&
-              isSameMonth(actionDate, currentDate)) {
-              let iccid = response.data.esims[i].iccid;
-              // get location info
-              let res = await axios.get(
-                API_URL + 'esims/' + iccid + '/location',
-                {
-                  params: {
-                    iccid: iccid
-                  },
-                  headers: {
-                    'X-API-Key': API_KEY,
-                    Authorization: 'Bearer ' + window.localStorage.getItem('refreshToken')
-                  }
-                });
-
-              let locationInfo = res.data;
-              let country = locationInfo.country || '';
-
-              res = await axios.get(
-                API_URL + 'esims/' + iccid + '/bundles',
-                {
-                  params: {
-                    iccid: iccid,
-                    includeUsed: false
-                  },
-                  headers: {
-                    'X-API-Key': API_KEY,
-                    Authorization: 'Bearer ' + window.localStorage.getItem('refreshToken')
-                  }
-                });
-
-              let bundles = res.data.bundles;
-              let initialQuantity = bundles?.[0].assignments?.[0].initialQuantity;
-              let remainingQuantity = bundles?.[0].assignments?.[0]?.remainingQuantity;
-              let endTime = bundles?.[0].assignments?.[0]?.endTime;
-
-              result.push(Object.assign({}, response.data.esims[i], {
-                id: no,
-                country: country,
-                dataUsage: (initialQuantity / Math.pow(10, 9)) + 'GB / ' + (remainingQuantity / Math.pow(10, 9)).toFixed(2) + 'GB',
-                expireDate: differenceInDays(new Date(endTime), new Date()) + 'Days Left',
-              }))
-              no++
-            }
-          }
-          setSimData(result)
-        }
+    if (!simData ) {
+      getViewESimsData(year, month).then((result) => {
+        updateViewESims(result)
       })
-      .catch((error) => {
-        console.log(error);
-      });
+    }
   }, [year, month])
 
   const handleYear = (year) => {
@@ -166,7 +106,7 @@ export default function Settings() {
         handleYear={handleYear}
         handleMonth={handleMonth}
         columnsData={columns}
-        tableData={simData || []}
+        tableData={simData}
         isLoading={isLoading}
       />
     </Box>

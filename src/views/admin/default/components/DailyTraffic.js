@@ -57,7 +57,7 @@ export default function DailyTraffic(props) {
 
   useEffect(() => {
     let country_bundles = {}
-    if(!data) return
+    if (!data) return
     for (let i = 0; i < data.thisPeriodBundlesSold.length; i++) {
       let country = data.thisPeriodBundlesSold[i].country;
       if (country_bundles[country]) {

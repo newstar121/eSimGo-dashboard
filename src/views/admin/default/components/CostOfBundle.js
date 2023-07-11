@@ -163,7 +163,7 @@ export default function CostOfBundle(props) {
     let result = []
     Object.keys(DISPLAY_TYPE).forEach((type) => {
       result.push(
-        <option value={type}>{DISPLAY_TYPE_NAME[type]}</option>
+        <option value={type} key={type}>{DISPLAY_TYPE_NAME[type]}</option>
       )
     })
 
@@ -174,7 +174,7 @@ export default function CostOfBundle(props) {
     let result = []
     Object.keys(REGION_TYPE).forEach((type) => {
       result.push(
-        <option value={type}>{REGION_TYPE_NAME[type]}</option>
+        <option value={type} key={type}>{REGION_TYPE_NAME[type]}</option>
       )
     })
 

@@ -54,19 +54,12 @@ import {
   MdTrendingUp,
 } from "react-icons/md";
 import { API_URL, API_KEY } from "utils/constant";
-import CheckTable from "views/admin/default/components/CheckTable";
 import TopBundleTable from "views/admin/default/components/TopBundleTable";
 import DailyTraffic from "views/admin/default/components/DailyTraffic";
 import PieCard from "views/admin/default/components/PieCard";
-import Tasks from "views/admin/default/components/Tasks";
 import CostOfBundle from "views/admin/default/components/CostOfBundle";
-import WeeklyRevenue from "views/admin/default/components/WeeklyRevenue";
-import {
-  columnsDataCheck,
-  columnsDataComplex,
-} from "views/admin/default/variables/columnsData";
-import tableDataCheck from "views/admin/default/variables/tableDataCheck.json";
-import tableDataComplex from "views/admin/default/variables/tableDataComplex.json";
+import { getTotalBundlesSold } from "contexts/AppContext";
+import { useGlobalData } from "contexts/AppContext";
 
 const columns = [
   {
@@ -84,14 +77,11 @@ export default function UserReports() {
   const brandColor = useColorModeValue("brand.500", "white");
   const boxBg = useColorModeValue("secondaryGray.300", "whiteAlpha.100");
 
-  const [thisPeriodTotalBundlesSold, setThisPeriodTotalBundlesSold] = useState(0)
-  const [previousPeriodTotalBundlesSold, setPreviousPeriodTotalBundlesSold] = useState(0)
-  const [percentageDifference, setPercentageDifference] = useState(0)
   const [showTotalBundle, setShowTotalBundle] = useState(true)
 
-  const [totalCostOfBundles, setTotalCostOfBundles] = useState([])
-  const [totalCostOfNewEsims, setTotalCostOfNewEsims] = useState([])
-  const [totalCostOfExistingEsims, setTotalCostOfExistingEsims] = useState([])
+  // const [totalCostOfBundles, setTotalCostOfBundles] = useState([])
+  // const [totalCostOfNewEsims, setTotalCostOfNewEsims] = useState([])
+  // const [totalCostOfExistingEsims, setTotalCostOfExistingEsims] = useState([])
 
   const [totalEsims, setTotalEsims] = useState(0)
   const [totalEsimsWithBundlesApplied, setTotalEsimsWithBundlesApplied] = useState(0)
@@ -114,51 +104,34 @@ export default function UserReports() {
   const [thisPeriodBundlesSold, setThisPeriodBundlesSold] = useState([])
   const [previousPeriodBundlesSold, setPreviousPeriodBundlesSold] = useState([])
 
-  // TOTAL BUNDLES SOLD
-  const getTotalBundlesSold = (filterBy = null) => {
-    axios.post(
-      API_URL + 'dashboard/charts', {
-      "filterBy": filterBy,
-      "monthEnd": null,
-      "monthStart": null,
-      "subType": null,
-      "type": "totalBundlesSold"
-    }, {
-      headers: {
-        'X-API-Key': API_KEY,
-        Authorization: 'Bearer ' + window.localStorage.getItem('refreshToken')
-      }
-    }).then(function (response) {
-      setThisPeriodTotalBundlesSold(parseInt(response.data.thisPeriodTotalBundlesSold))
-      setPreviousPeriodTotalBundlesSold(response.data.previousPeriodTotalBundlesSold)
-      setPercentageDifference(response.data.percentageDifference.toFixed(0))
-    }).catch(function (error) {
-      console.log(error);
-    });
-  }
+  const [state, {updateTotalBundlesSold}] = useGlobalData();
+  
+  const thisPeriodTotalBundlesSold = state?.totalBundlesSold?.thisPeriodTotalBundlesSold || 0;
+  const percentageDifference = state?.totalBundlesSold?.percentageDifference || 0;
+
 
   // COST OF BUNDLES PER MONTH
-  const getCostOfBundlesPerMonth = () => {
-    axios.post(
-      API_URL + 'dashboard/charts', {
-      "filterBy": "",
-      "monthEnd": null,
-      "monthStart": null,
-      "subType": null,
-      "type": "costOfBundlesPerMonth"
-    }, {
-      headers: {
-        'X-API-Key': API_KEY,
-        Authorization: 'Bearer ' + window.localStorage.getItem('refreshToken')
-      }
-    }).then(function (response) {
-      setTotalCostOfBundles(response.data.totalCostOfBundles)
-      setTotalCostOfNewEsims(response.data.totalCostOfNewEsims)
-      setTotalCostOfExistingEsims(response.data.totalCostOfExistingEsims)
-    }).catch(function (error) {
-      console.log(error);
-    });
-  }
+  // const getCostOfBundlesPerMonth = () => {
+  //   axios.post(
+  //     API_URL + 'dashboard/charts', {
+  //     "filterBy": "",
+  //     "monthEnd": null,
+  //     "monthStart": null,
+  //     "subType": null,
+  //     "type": "costOfBundlesPerMonth"
+  //   }, {
+  //     headers: {
+  //       'X-API-Key': API_KEY,
+  //       Authorization: 'Bearer ' + window.localStorage.getItem('refreshToken')
+  //     }
+  //   }).then(function (response) {
+  //     setTotalCostOfBundles(response.data.totalCostOfBundles)
+  //     setTotalCostOfNewEsims(response.data.totalCostOfNewEsims)
+  //     setTotalCostOfExistingEsims(response.data.totalCostOfExistingEsims)
+  //   }).catch(function (error) {
+  //     console.log(error);
+  //   });
+  // }
 
   // TOTAL ESIMS PRODUCED
   const getTotalEsimsProduced = (filterBy = null) => {
@@ -263,10 +236,12 @@ export default function UserReports() {
   useEffect(() => {
 
     // TOTAL BUNDLES SOLD
-    getTotalBundlesSold()
+    getTotalBundlesSold().then((result) => {
+      updateTotalBundlesSold(result)
+    });
 
     // COST OF BUNDLES PER MONTH
-    getCostOfBundlesPerMonth()
+    // getCostOfBundlesPerMonth()
 
     // TOTAL ESIMS PRODUCED
     getTotalEsimsProduced()
@@ -291,9 +266,13 @@ export default function UserReports() {
   const handleShowBundle = (value) => {
     setShowTotalBundle(value)
     if (value === true) {
-      getTotalBundlesSold()
+      getTotalBundlesSold().then((result) => {
+        updateTotalBundlesSold(result)
+      });
     } else {
-      getTotalBundlesSold("CalendarMonth")
+      getTotalBundlesSold("CalendarMonth").then((result) => {
+        updateTotalBundlesSold(result)
+      });
     }
   }
 

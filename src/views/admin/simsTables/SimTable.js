@@ -68,10 +68,10 @@ export default function DevelopmentTable(props) {
     let result = []
 
     for (let i = 4; i >= 0; i--) {
-      result.push(<option value={currentYear + i}>{currentYear + i}</option>)
+      result.push(<option value={currentYear + i} key={currentYear + i}>{currentYear + i}</option>)
     }
     for (let i = 1; i <= 5; i++) {
-      result.push(<option value={currentYear - i}>{currentYear - i}</option>)
+      result.push(<option value={currentYear - i} key={currentYear - i}>{currentYear - i}</option>)
     }
 
     return result;
@@ -81,7 +81,7 @@ export default function DevelopmentTable(props) {
     let result = []
 
     for (let i = 1; i <= 12; i++) {
-      result.push(<option value={i - 1}>{i}</option>)
+      result.push(<option value={i - 1} key={i}>{i}</option>)
     }
 
     return result
