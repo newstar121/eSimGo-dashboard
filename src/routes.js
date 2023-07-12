@@ -20,6 +20,7 @@ import Profile from "views/admin/profile";
 import DataTables from "views/admin/dataTables";
 import SimsTable from "views/admin/simsTables";
 import OrderTable from "views/admin/orderTable";
+import Payment from "views/admin/payment";
 import RTL from "views/admin/rtl";
 import Setting from "views/admin/setting";
 // Auth Imports
@@ -90,7 +91,7 @@ const routes = [
     layout: "/admin",
     path: "/payment",
     icon: <Icon as={MdAccountBalanceWallet} width='20px' height='20px' color='inherit' />,
-    component: DataTables,
+    component: Payment,
   },
   {
     name: "eSIM PLANS",
