@@ -10,6 +10,7 @@ const UPDATE_USERS = 'UPDATE_USERS'
 const UPDATE_GROUPS = 'UPDATE_GROUPS'
 const UPDATE_VIEW_ESIMS = 'UPDATE_VIEW_ESIMS'
 const UPDATE_TOTAL_BUNDLES_SOLD = 'UPDATE_TOTAL_BUNDLES_SOLD'
+const UPDATE_COUNTRIES = 'UPDATE_COUNTRIES'
 
 function reducer(state, { type, payload }) {
 
@@ -68,6 +69,14 @@ function reducer(state, { type, payload }) {
       return {
         ...state,
         eSimData,
+      }
+    }
+
+    case UPDATE_COUNTRIES: {
+      const { countries } = payload
+      return {
+        ...state,
+        countries
       }
     }
 
@@ -247,6 +256,15 @@ const GlobalProvider = ({ children }) => {
     })
   }, [])
 
+  const updateCountries = useCallback((data) => {
+    dispatch({
+      type: UPDATE_COUNTRIES,
+      payload: {
+        countries: data,
+      },
+    })
+  }, [])
+
   useEffect(() => {
     axios.get(API_URL + 'login',
       {
@@ -302,6 +320,10 @@ const GlobalProvider = ({ children }) => {
         updateViewESims(result)
       })
 
+      axios.get('https://portal.esim-go.com/assets/packages/country_code_picker/i18n/en.json').then((response) => {
+        updateCountries(response.data)
+      })
+
     }).catch((error) => {
       console.log('login error', error);
     })
@@ -319,6 +341,7 @@ const GlobalProvider = ({ children }) => {
             updateGroups,
             updateViewESims,
             updateTotalBundlesSold,
+            updateCountries,
           }
         ],
         [
@@ -328,7 +351,8 @@ const GlobalProvider = ({ children }) => {
           updateUser,
           updateGroups,
           updateViewESims,
-          updateTotalBundlesSold
+          updateTotalBundlesSold,
+          updateCountries
         ]
       )}>
       {children}

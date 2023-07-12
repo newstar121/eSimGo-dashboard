@@ -1,12 +1,14 @@
 // Chakra imports
-import { Box, Flex, SimpleGrid, Text, Select, Input } from "@chakra-ui/react";
+import { Box, Flex, SimpleGrid, Text, Input, Image, Icon } from "@chakra-ui/react";
 import React from "react";
 import { useEffect } from "react";
 import axios from "axios";
 import { useState } from "react";
 import { API_URL } from "utils/constant";
 import { API_KEY } from "utils/constant";
-
+import { useGlobalData } from "contexts/AppContext";
+import { Dropdown } from "semantic-ui-react";
+import { MdAccountBalanceWallet } from "react-icons/md";
 const columns = [
   {
     Header: "TYPE",
@@ -46,77 +48,117 @@ const columns = [
   },
 ];
 
-export default function Settings() {
+export default function Payment() {
 
-  const [chargeData, setChargeData] = useState([])
-  const [isLoading, setIsLoading] = useState(false)
+  const [state] = useGlobalData()
 
-  const [myData, setMyData] = React.useState([]);
+  const [country, setCountry] = useState('');
+  const [countryInfo, setCountryInfo] = useState([])
 
-  const inputProps = {
-    inputStyle: 'box',
-    labelStyle: 'stacked',
-    placeholder: 'Please select...'
-  };
+  const getOrganization = () => {
+
+    let organizations = state?.organizations || [];
+    let user = state?.user;
+    let userId = state?.user?.id;
+
+    let findIndex = organizations.findIndex((organization) => {
+      let findUserIndex = organization.users.findIndex((user) => user.id === userId)
+      return findUserIndex > -1;
+    })
+
+    if (findIndex > -1) {
+      return organizations[findIndex]
+    } else {
+      return {}
+    }
+  }
+
+  const organization = getOrganization();
+  const default_country = organization.country || ''
+  const countries = state?.countries || {};
+  
+  const balance = organization.balance || 0;
 
   useEffect(() => {
+    let result = []
+    let keys = Object.keys(countries)
 
-    axios.get('https://trial.mobiscroll.com/content/countries.json', (resp) => {
-      const countries = [];
-      for (let i = 0; i < resp.length; ++i) {
-        const country = resp[i];
-        countries.push({ text: country.text, value: country.value });
-      }
-      setMyData(countries);
-    });
-  }, [])
+    for (let i = 0; i < keys.length; i++) {
+      let key = keys[i].toLowerCase()
+      // result.push(
+      //   <option value={keys[i]} key={keys[i]}>
+      //     <Flex align='center'>
 
-  const renderCustomItem = (item) => {
-    return <div className="md-country-picker-item">
-      <img className="md-country-picker-flag" src={'https://img.mobiscroll.com/demos/flags/' + item.data.value + '.png'} alt="Flag" />
-      {item.display}
-    </div>;
+      //       <Image src={'https://portal.esim-go.com/assets/packages/intl_phone_number_input/assets/flags/' + keys[i].toLowerCase() + '.png'} alt='flag' />
+      //       {countries[keys[i]].toString()}
+      //     </Flex>
+      //   </option>
+      // )
+
+      result.push({
+        key: key,
+        value: key,
+        flag: key,
+        text: countries[keys[i]].toString()
+      })
+    }
+    setCountryInfo(result);
+
+  }, [countries])
+
+  const handleCountry = (value) => {
+    if (value !== country) setCountry(value)
   }
 
   // Chakra Color Mode
   return (
-    <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
+    <Box p={{ base: "20px", md: "25px", xl: "30px" }} pt={{ base: "130px", md: "80px", xl: "80px" }}>
       <Flex direction='column'>
-        <Text fontSize='lg' fontWeight='700' color='black'>Billing Management</Text>
-        <Text fontSize='md' fontWeight='600' color='secondaryGray.600'>Manage your Account's billing using the options below.</Text>
+        <Text fontSize='2xl' fontWeight='700' color='black' mb='10px'>Billing Management</Text>
+        <Text fontSize='xl' fontWeight='600' color='secondaryGray.600' mb='10px'>Manage your Account's billing using the options below.</Text>
 
-        <Text fontSize='md' fontWeight='700' color='black'>Billing Setting</Text>\
-        <SimpleGrid columns={{ base: 1, md: 2, xl: 2 }} gap='20px' mb='20px'>
+        <Text fontSize='xl' fontWeight='700' color='black'>Billing Setting</Text>
+        <SimpleGrid columns={{ base: 1, md: 2, xl: 2 }} gap='20px' mb='10px' mt='10px'>
           <Flex direction='column'>
-            <Text fontSize='sm' fontFamily='700'>Country of Registration*</Text>
-            <Select
-              data={myData}
-              label="Countries"
-              inputProps={inputProps}
-              display="anchored"
-              itemHeight={40}
-              renderItem={renderCustomItem}
+            <Text fontSize='lg' fontWeight='700' mb='5px'>Country of Registration*</Text>
+            {/* <Select
+              onClick={(e) => handleCountry(e.target.value)}
+              // defaultValue={default_country}
+              value={country ? country : default_country}
+            >
+              {countryInfo}
+            </Select> */}
+            <Dropdown
+              placeholder='Select Country'
+              // fluid
+              search
+              selection
+              value={country ? country : default_country}
+              onClick={(e) => handleCountry(e.target.value)}
+              options={countryInfo}
             />
           </Flex>
           <Flex justify='space-between'>
             <Flex direction='column' w='30%'>
-              <Text fontSize='sm' fontFamily='700'>Country of Registration*</Text>
+              <Text fontSize='lg' fontWeight='700'>Country Code</Text>
               <Input
-                value={''}
+                defaultValue={''}
 
                 variant='auth'
                 fontSize='lg'
                 ms={{ base: "0px", md: "0px" }}
+                mt='7px'
                 fontWeight='500'
               />
             </Flex>
             <Flex direction='column' w='65%'>
-              <Text fontSize='sm' fontFamily='700'>Country of Registration*</Text>
+              <Text fontSize='lg' fontWeight='700'>Vat No.</Text>
               <Input
-                value={''}
+                defaultValue={''}
 
                 variant='auth'
                 fontSize='lg'
+                mt='7px'
                 ms={{ base: "0px", md: "0px" }}
                 fontWeight='500'
               />
@@ -124,6 +166,17 @@ export default function Settings() {
           </Flex>
 
         </SimpleGrid>
+        <Text fontSize='xl' fontWeight='700' color='black'>Current Balance</Text>
+        <Flex border='1px' borderStyle='solid' borderRadius='10px' align='center' p='20px'>
+          <Icon as={MdAccountBalanceWallet} width='25px' height='25px' color='blue' mr='20px'/>
+          <Text fontWeight='700' fontSize='2xl'>Your Account Balance is </Text>
+          <Text fontWeight='700' fontSize='2xl' color='green'>${balance}</Text>
+        </Flex>
+        <Text fontSize='xl' fontWeight='700' color='black'>Saved Billing Address</Text>
+
+        {/* <Text fontSize='xl' fontWeight='700' color='black'>Auto Top Up Setting</Text> */}
+
+        {/* <Text fontSize='xl' fontWeight='700' color='black'>Billing Setting</Text> */}
       </Flex>
     </Box>
   );
