@@ -1,5 +1,5 @@
 // Chakra imports
-import { Box, Flex, SimpleGrid, Text, Input, Image, Icon } from "@chakra-ui/react";
+import { Box, Flex, SimpleGrid, Text, Input, Image, Icon, Button, useDisclosure } from "@chakra-ui/react";
 import React from "react";
 import { useEffect } from "react";
 import axios from "axios";
@@ -8,7 +8,8 @@ import { API_URL } from "utils/constant";
 import { API_KEY } from "utils/constant";
 import { useGlobalData } from "contexts/AppContext";
 import { Dropdown } from "semantic-ui-react";
-import { MdAccountBalanceWallet } from "react-icons/md";
+import { MdAccountBalanceWallet, MdMap } from "react-icons/md";
+import { TopUpDialog } from "components/dialog/topUpDialog";
 const columns = [
   {
     Header: "TYPE",
@@ -55,29 +56,50 @@ export default function Payment() {
   const [country, setCountry] = useState('');
   const [countryInfo, setCountryInfo] = useState([])
 
-  const getOrganization = () => {
+  // const {
+  //   isOpen: isOpenBilling,
+  //   onOpen: onOpenBilling,
+  //   onClose: onCloseBilling,
+  // } = useDisclosure();
 
-    let organizations = state?.organizations || [];
+  const getOrganisation = () => {
+
+    let organisations = state?.organisations || [];
     let user = state?.user;
     let userId = state?.user?.id;
 
-    let findIndex = organizations.findIndex((organization) => {
-      let findUserIndex = organization.users.findIndex((user) => user.id === userId)
+    let findIndex = organisations.findIndex((organisation) => {
+      let findUserIndex = organisation.users.findIndex((user) => user.id === userId)
       return findUserIndex > -1;
     })
 
     if (findIndex > -1) {
-      return organizations[findIndex]
+      return organisations[findIndex]
     } else {
-      return {}
+      return undefined
     }
   }
 
-  const organization = getOrganization();
-  const default_country = organization.country || ''
+  const organisation = getOrganisation();
+  const default_country = organisation?.country.toLowerCase() || ''
   const countries = state?.countries || {};
-  
-  const balance = organization.balance || 0;
+
+  const balance = organisation?.balance || 0;
+  const billingName = organisation ? organisation?.billingFirstNames + ' ' + organisation?.billingSurname : '';
+  const billingContentStr = organisation ? organisation?.billingAddr1 + ', ' + organisation?.billingAddr2
+    + ', ' + organisation?.billingCity + ', ' + organisation?.billingPostcode
+    + ', ' + organisation?.billingState + ', ' + organisation?.registeredCountry : '';
+  const billingContent = billingContentStr.replace(/,\s,/g, ",")
+  const countryCode = organisation?.country || '';
+  const vatNo = organisation?.taxNumber.substring(countryCode.length)
+
+  const renderCountry = (country) => {
+    if (Array.isArray(country)) {
+      return country[0]
+    } else {
+      return country
+    }
+  }
 
   useEffect(() => {
     let result = []
@@ -99,7 +121,7 @@ export default function Payment() {
         key: key,
         value: key,
         flag: key,
-        text: countries[keys[i]].toString()
+        text: renderCountry(countries[keys[i]])
       })
     }
     setCountryInfo(result);
@@ -110,74 +132,117 @@ export default function Payment() {
     if (value !== country) setCountry(value)
   }
 
+  const handleSave = () => {
+
+  }
+
+  const [isOpenTopUp, setOpenTopUp] = useState(false)
+  const [isOpenBilling, setOpenBilling] = useState(false)
+
+  const handleTopUp = () => {
+    setOpenTopUp(true)
+  }
+
+  const handleBilling = () => {
+    // onOpenBilling()
+  }
+
   // Chakra Color Mode
   return (
-    <Box p={{ base: "20px", md: "25px", xl: "30px" }} pt={{ base: "130px", md: "80px", xl: "80px" }}>
-      <Flex direction='column'>
-        <Text fontSize='2xl' fontWeight='700' color='black' mb='10px'>Billing Management</Text>
-        <Text fontSize='xl' fontWeight='600' color='secondaryGray.600' mb='10px'>Manage your Account's billing using the options below.</Text>
+    <>
+      <TopUpDialog
+        isOpen={isOpenTopUp}
+        handleClose={() => { setOpenTopUp(false) }}
+      />
 
-        <Text fontSize='xl' fontWeight='700' color='black'>Billing Setting</Text>
-        <SimpleGrid columns={{ base: 1, md: 2, xl: 2 }} gap='20px' mb='10px' mt='10px'>
-          <Flex direction='column'>
-            <Text fontSize='lg' fontWeight='700' mb='5px'>Country of Registration*</Text>
-            {/* <Select
+      <Box p={{ base: "20px", md: "25px", xl: "30px" }} pt={{ base: "130px", md: "80px", xl: "80px" }}>
+        <Flex direction='column'>
+          <Text fontSize='2xl' fontWeight='700' color='black' mb='10px'>Billing Management</Text>
+          <Text fontSize='xl' fontWeight='600' color='secondaryGray.600' mb='10px'>Manage your Account's billing using the options below.</Text>
+
+          <Text fontSize='xl' fontWeight='700' color='black'>Billing Setting</Text>
+          <SimpleGrid columns={{ base: 1, md: 2, xl: 2 }} gap='20px' mb='10px' mt='10px'>
+            <Flex direction='column'>
+              <Text fontSize='lg' fontWeight='700' mb='5px'>Country of Registration*</Text>
+              {/* <Select
               onClick={(e) => handleCountry(e.target.value)}
               // defaultValue={default_country}
               value={country ? country : default_country}
             >
               {countryInfo}
             </Select> */}
-            <Dropdown
-              placeholder='Select Country'
-              // fluid
-              search
-              selection
-              value={country ? country : default_country}
-              onClick={(e) => handleCountry(e.target.value)}
-              options={countryInfo}
-            />
-          </Flex>
-          <Flex justify='space-between'>
-            <Flex direction='column' w='30%'>
-              <Text fontSize='lg' fontWeight='700'>Country Code</Text>
-              <Input
-                defaultValue={''}
-
-                variant='auth'
-                fontSize='lg'
-                ms={{ base: "0px", md: "0px" }}
-                mt='7px'
-                fontWeight='500'
+              <Dropdown
+                placeholder='Select Country'
+                // fluid
+                search
+                selection
+                value={country ? country : default_country}
+                onClick={(e) => handleCountry(e.target.value)}
+                options={countryInfo}
               />
             </Flex>
-            <Flex direction='column' w='65%'>
-              <Text fontSize='lg' fontWeight='700'>Vat No.</Text>
-              <Input
-                defaultValue={''}
+            <Flex justify='space-between'>
+              <Flex direction='column' w='30%'>
+                <Text fontSize='lg' fontWeight='700'>Country Code</Text>
+                <Input
+                  defaultValue={countryCode}
 
-                variant='auth'
-                fontSize='lg'
-                mt='7px'
-                ms={{ base: "0px", md: "0px" }}
-                fontWeight='500'
-              />
+                  variant='auth'
+                  fontSize='lg'
+                  ms={{ base: "0px", md: "0px" }}
+                  mt='7px'
+                  fontWeight='500'
+                />
+              </Flex>
+              <Flex direction='column' w='65%'>
+                <Text fontSize='lg' fontWeight='700'>Vat No.</Text>
+                <Input
+                  defaultValue={vatNo}
+
+                  variant='auth'
+                  fontSize='lg'
+                  mt='7px'
+                  ms={{ base: "0px", md: "0px" }}
+                  fontWeight='500'
+                />
+              </Flex>
             </Flex>
+
+          </SimpleGrid>
+
+          <Text fontSize='xl' fontWeight='700' color='black'>Current Balance</Text>
+          <Flex border='1px' borderStyle='solid' borderRadius='10px' align='center' justify='space-between' p='20px' mt='10px'>
+            <Flex align='center'>
+              <Icon as={MdAccountBalanceWallet} width='25px' height='25px' color='blue' mr='20px' />
+              <Text fontWeight='700' fontSize='xl' mr='10px'>Your Account Balance is </Text>
+              <Text fontWeight='700' fontSize='xl' color='green'>${balance}</Text>
+            </Flex>
+            <Text fontWeight='700' fontSize='2xl' color='blue' mr='10px' onClick={handleTopUp} className="icon-hover">TOP UP</Text>
           </Flex>
 
-        </SimpleGrid>
-        <Text fontSize='xl' fontWeight='700' color='black'>Current Balance</Text>
-        <Flex border='1px' borderStyle='solid' borderRadius='10px' align='center' p='20px'>
-          <Icon as={MdAccountBalanceWallet} width='25px' height='25px' color='blue' mr='20px'/>
-          <Text fontWeight='700' fontSize='2xl'>Your Account Balance is </Text>
-          <Text fontWeight='700' fontSize='2xl' color='green'>${balance}</Text>
+          <Text fontSize='xl' fontWeight='700' color='black' mt='20px'>Saved Billing Address</Text>
+          <Flex border='1px' borderStyle='solid' borderRadius='10px' align='center' justify='space-between' p='20px' mt='10px'>
+            <Flex align='center'>
+              <Icon as={MdMap} width='25px' height='25px' color='blue' mr='20px' />
+              <Flex direction='column'>
+                <Text fontWeight='700' fontSize='xl' mr='10px'>{billingName}</Text>
+                <Text fontWeight='700' fontSize='xl' color='secondaryGray.500'>{billingContent}</Text>
+              </Flex>
+            </Flex>
+            <Text fontWeight='700' fontSize='2xl' color='blue' mr='10px' onClick={handleBilling} className="icon-hover">CHANGE</Text>
+          </Flex>
+
+          {/* <Text fontSize='xl' fontWeight='700' color='black'>Auto Top Up Setting</Text> */}
+
+          {/* <Text fontSize='xl' fontWeight='700' color='black'>Billing Setting</Text> */}
+
+          <Flex align='center' justify='center' w='100%' mt='30px'>
+            <Button colorScheme='blue' size="lg" onClick={handleSave}>
+              Save Changes
+            </Button>
+          </Flex>
         </Flex>
-        <Text fontSize='xl' fontWeight='700' color='black'>Saved Billing Address</Text>
-
-        {/* <Text fontSize='xl' fontWeight='700' color='black'>Auto Top Up Setting</Text> */}
-
-        {/* <Text fontSize='xl' fontWeight='700' color='black'>Billing Setting</Text> */}
-      </Flex>
-    </Box>
+      </Box>
+    </>
   );
 }

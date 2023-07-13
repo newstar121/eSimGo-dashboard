@@ -4,7 +4,7 @@ import { API_URL, API_KEY, LOGIN_TOKEN } from "utils/constant";
 import { differenceInDays, isSameMonth, isSameYear } from "date-fns";
 
 const UPDATE = 'UPDATE'
-const UPDATE_ORGANIZATIONS = 'UPDATE_ORGANIZATIONS'
+const UPDATE_ORGANISATIONS = 'UPDATE_ORGANISATIONS'
 const UPDATE_USER = 'UPDATE_USER'
 const UPDATE_USERS = 'UPDATE_USERS'
 const UPDATE_GROUPS = 'UPDATE_GROUPS'
@@ -24,11 +24,11 @@ function reducer(state, { type, payload }) {
       }
     }
 
-    case UPDATE_ORGANIZATIONS: {
-      const { organizations } = payload
+    case UPDATE_ORGANISATIONS: {
+      const { organisations } = payload
       return {
         ...state,
-        organizations,
+        organisations,
       }
     }
 
@@ -163,6 +163,23 @@ export async function getViewESimsData(year, month) {
   }
 }
 
+export async function getOrganisationBalance(params) {
+  try {
+    let res = await axios.put(
+      API_URL + 'organisation/balance',
+      params,
+      {
+        headers: {
+          'X-API-Key': API_KEY,
+          Authorization: 'Bearer ' + window.localStorage.getItem('refreshToken')
+        }
+      });
+    return res.data
+  } catch (error) {
+    console.log('getOrganisationBalance error', error)
+  }
+}
+
 export async function getTotalBundlesSold(filterBy = null) {
   try {
     let response = await axios.post(
@@ -189,6 +206,27 @@ export async function getTotalBundlesSold(filterBy = null) {
   }
 }
 
+export async function getOrganisations() {
+  try {
+    let res = await axios.get(API_URL + 'organisations/current',
+      {
+        params: {
+          id: 'current'
+        },
+        headers: {
+          'X-API-Key': API_KEY,
+          Authorization: 'Bearer ' + window.localStorage.getItem('refreshToken')
+        }
+      }
+    );
+    return res;
+
+  } catch (error) {
+    return {}
+    console.log('getOrganisations error', error)
+  }
+}
+
 const GlobalProvider = ({ children }) => {
 
   const [state, dispatch] = useReducer(reducer, {})
@@ -202,11 +240,11 @@ const GlobalProvider = ({ children }) => {
     })
   }, [])
 
-  const updateOrganizations = useCallback((data) => {
+  const updateOrganisations = useCallback((data) => {
     dispatch({
-      type: UPDATE_ORGANIZATIONS,
+      type: UPDATE_ORGANISATIONS,
       payload: {
-        organizations: data,
+        organisations: data,
       },
     })
   }, [])
@@ -246,7 +284,7 @@ const GlobalProvider = ({ children }) => {
       },
     })
   }, [])
-  
+
   const updateViewESims = useCallback((data) => {
     dispatch({
       type: UPDATE_VIEW_ESIMS,
@@ -281,23 +319,10 @@ const GlobalProvider = ({ children }) => {
 
       // console.log('token', window.localStorage.getItem('refreshToken'));
       // GET CURRENT USER
-      axios.get(API_URL + 'organisations/current',
-        {
-          params: {
-            id: 'current'
-          },
-          headers: {
-            'X-API-Key': API_KEY,
-            Authorization: 'Bearer ' + window.localStorage.getItem('refreshToken')
-          }
-        }
-      ).then((response) => {
 
-        updateOrganizations(response.data.organizations)
+      getOrganisations().then((response) => {
+        updateOrganisations(response.data.organisations)
         updateUser(response.data.user)
-
-      }).catch((error) => {
-        console.log('get organization data error', error);
       })
 
       // GET GROUPS
@@ -313,7 +338,7 @@ const GlobalProvider = ({ children }) => {
         updateGroups(response.data.groups)
 
       }).catch((error) => {
-        console.log('get organization data error', error);
+        console.log('get organisation data error', error);
       })
 
       getViewESimsData((new Date()).getFullYear(), (new Date()).getMonth()).then((result) => {
@@ -336,7 +361,7 @@ const GlobalProvider = ({ children }) => {
           state,
           {
             update,
-            updateOrganizations,
+            updateOrganisations,
             updateUser,
             updateGroups,
             updateViewESims,
@@ -347,12 +372,12 @@ const GlobalProvider = ({ children }) => {
         [
           state,
           update,
-          updateOrganizations,
+          updateOrganisations,
           updateUser,
           updateGroups,
           updateViewESims,
           updateTotalBundlesSold,
-          updateCountries
+          updateCountries,
         ]
       )}>
       {children}

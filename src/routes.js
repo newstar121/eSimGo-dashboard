@@ -21,7 +21,7 @@ import DataTables from "views/admin/dataTables";
 import SimsTable from "views/admin/simsTables";
 import OrderTable from "views/admin/orderTable";
 import Payment from "views/admin/payment";
-import RTL from "views/admin/rtl";
+
 import Setting from "views/admin/setting";
 // Auth Imports
 import SignInCentered from "views/auth/signIn";
