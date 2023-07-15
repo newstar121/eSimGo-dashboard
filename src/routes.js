@@ -20,6 +20,7 @@ import Profile from "views/admin/profile";
 import DataTables from "views/admin/dataTables";
 import SimsTable from "views/admin/simsTables";
 import OrderTable from "views/admin/orderTable";
+import PlanTable from "views/admin/planTable";
 import Payment from "views/admin/payment";
 
 import Setting from "views/admin/setting";
@@ -98,7 +99,7 @@ const routes = [
     layout: "/admin",
     path: "/plan",
     icon: <Icon as={MdAccountBalanceWallet} width='20px' height='20px' color='inherit' />,
-    component: DataTables,
+    component: PlanTable,
   },
   {
     name: "LOG OUT",

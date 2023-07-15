@@ -49,6 +49,8 @@ import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { RiEyeCloseLine } from "react-icons/ri";
 import { useHistory } from "react-router-dom";
 import { USER_ROLE } from "utils/constant";
+import axios from "axios";
+import { API_BACKEND_URL } from "utils/constant";
 
 function SignIn() {
   // Chakra color mode
@@ -75,23 +77,36 @@ function SignIn() {
 
   const history = useHistory()
 
-  const onSignIn = () => {
+  const onSignIn = async () => {
 
-    window.localStorage.removeItem('user.role')
+    axios.post(
+      API_BACKEND_URL + 'auth/login',
+      {
+        username: email,
+        password: password
+      },
+      {
+        headers: {
+          Accept: '*/*'
+        }
+      }
+    ).then((response) => {
 
-    if (email === 'comp@ny.com' && password === '123456') {
-      window.localStorage.setItem('user.role', USER_ROLE.company)
-    } else if (email === 'resell@er.com' && password === '123456') {
-      window.localStorage.setItem('user.role', USER_ROLE.reseller)
-    } else if (email === 'end@user.com' && password === '123456') {
-      window.localStorage.setItem('user.role', USER_ROLE.user)
-    }
+      window.localStorage.removeItem('user.role')
+      window.localStorage.removeItem('token')
 
-    if (window.localStorage.getItem('user.role')) {
-      history.push('/admin/dashboard')
-    } else {
+      if(response.data.success) {
+        window.localStorage.setItem('user.role', response.data.role || USER_ROLE.user)
+        window.localStorage.setItem('token', response.data.token)
+        history.push('/admin/dashboard')
+      } else {
+        history.push('/')
+      }
+    }).catch(error => {
+      console.log('login error', error)
       history.push('/')
-    }
+    });
+
   }
 
   return (
@@ -167,7 +182,7 @@ function SignIn() {
             <Input
               isRequired={true}
               value={email}
-              onChange={(e) => {setEmail(e.target.value)}}
+              onChange={(e) => { setEmail(e.target.value) }}
               variant='auth'
               fontSize='sm'
               ms={{ base: "0px", md: "0px" }}
@@ -189,7 +204,7 @@ function SignIn() {
               <Input
                 isRequired={true}
                 value={password}
-                onChange={(e) => {setPassword(e.target.value)}}
+                onChange={(e) => { setPassword(e.target.value) }}
                 fontSize='sm'
                 placeholder='Min. 8 characters'
                 mb='24px'

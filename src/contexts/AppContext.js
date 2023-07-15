@@ -314,7 +314,7 @@ const GlobalProvider = ({ children }) => {
 
       window.localStorage.setItem('isAdmin', response.data.isAdmin);
       window.localStorage.setItem('refreshToken', response.data.refreshToken);
-      window.localStorage.setItem('token', response.data.token);
+      
       window.localStorage.setItem('verified', response.data.verified);
 
       // console.log('token', window.localStorage.getItem('refreshToken'));

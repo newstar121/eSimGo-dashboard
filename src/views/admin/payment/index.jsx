@@ -10,6 +10,8 @@ import { useGlobalData } from "contexts/AppContext";
 import { Dropdown } from "semantic-ui-react";
 import { MdAccountBalanceWallet, MdMap } from "react-icons/md";
 import { TopUpDialog } from "components/dialog/topUpDialog";
+import { BillingDialog } from "components/dialog/billingDialog";
+
 const columns = [
   {
     Header: "TYPE",
@@ -55,12 +57,6 @@ export default function Payment() {
 
   const [country, setCountry] = useState('');
   const [countryInfo, setCountryInfo] = useState([])
-
-  // const {
-  //   isOpen: isOpenBilling,
-  //   onOpen: onOpenBilling,
-  //   onClose: onCloseBilling,
-  // } = useDisclosure();
 
   const getOrganisation = () => {
 
@@ -144,7 +140,7 @@ export default function Payment() {
   }
 
   const handleBilling = () => {
-    // onOpenBilling()
+    setOpenBilling(true)
   }
 
   // Chakra Color Mode
@@ -153,6 +149,11 @@ export default function Payment() {
       <TopUpDialog
         isOpen={isOpenTopUp}
         handleClose={() => { setOpenTopUp(false) }}
+      />
+
+      <BillingDialog
+        isOpen={isOpenBilling}
+        handleClose={() => { setOpenBilling(false) }}
       />
 
       <Box p={{ base: "20px", md: "25px", xl: "30px" }} pt={{ base: "130px", md: "80px", xl: "80px" }}>
