@@ -5,28 +5,20 @@ import {
   MdDashboard,
   MdAccountBalanceWallet,
   MdInventory,
-  MdViewKanban,
   MdLogout,
-  MdAddCircleOutline,
   MdSimCard,
-  MdCreditCard,
-  MdHistoryEdu,
+  MdTravelExplore,
 } from "react-icons/md";
 
 // Admin Imports
 import MainDashboard from "views/admin/default";
-import NFTMarketplace from "views/admin/marketplace";
-import Profile from "views/admin/profile";
-import DataTables from "views/admin/dataTables";
 import SimsTable from "views/admin/simsTables";
-import OrderTable from "views/admin/orderTable";
 import PlanTable from "views/admin/planTable";
 import Payment from "views/admin/payment";
 
 import Setting from "views/admin/setting";
 // Auth Imports
 import SignInCentered from "views/auth/signIn";
-import { IoAddCircleOutline } from "react-icons/io5";
 
 const routes = [
   {
@@ -67,28 +59,28 @@ const routes = [
     hidden: true
   },
   {
-    name: "VIEW eSIMS",
+    name: "CURRENT eSIMS",
     layout: "/admin",
     path: "/esim",
     icon: <Icon as={MdSimCard} width='20px' height='20px' color='inherit' />,
     component: SimsTable,
   },
+  // {
+  //   name: "VIEW CHARGES",
+  //   layout: "/admin",
+  //   path: "/charge",
+  //   icon: <Icon as={MdCreditCard} width='20px' height='20px' color='inherit' />,
+  //   component: OrderTable,
+  // },
+  // {
+  //   name: "REPORTS",
+  //   layout: "/admin",
+  //   path: "/report",
+  //   icon: <Icon as={MdHistoryEdu} width='20px' height='20px' color='inherit' />,
+  //   component: DataTables,
+  // },
   {
-    name: "VIEW CHARGES",
-    layout: "/admin",
-    path: "/charge",
-    icon: <Icon as={MdCreditCard} width='20px' height='20px' color='inherit' />,
-    component: OrderTable,
-  },
-  {
-    name: "REPORTS",
-    layout: "/admin",
-    path: "/report",
-    icon: <Icon as={MdHistoryEdu} width='20px' height='20px' color='inherit' />,
-    component: DataTables,
-  },
-  {
-    name: "BILLING AND PAYMENT",
+    name: "BILLING & PAYMENT",
     layout: "/admin",
     path: "/payment",
     icon: <Icon as={MdAccountBalanceWallet} width='20px' height='20px' color='inherit' />,
@@ -98,7 +90,7 @@ const routes = [
     name: "eSIM PLANS",
     layout: "/admin",
     path: "/plan",
-    icon: <Icon as={MdAccountBalanceWallet} width='20px' height='20px' color='inherit' />,
+    icon: <Icon as={MdTravelExplore} width='20px' height='20px' color='inherit' />,
     component: PlanTable,
   },
   {

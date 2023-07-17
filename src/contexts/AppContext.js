@@ -2,6 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useReducer,
 import axios from 'axios';
 import { API_URL, API_KEY, LOGIN_TOKEN } from "utils/constant";
 import { differenceInDays, isSameMonth, isSameYear } from "date-fns";
+import { API_BACKEND_URL } from "utils/constant";
 
 const UPDATE = 'UPDATE'
 const UPDATE_ORGANISATIONS = 'UPDATE_ORGANISATIONS'
@@ -11,6 +12,7 @@ const UPDATE_GROUPS = 'UPDATE_GROUPS'
 const UPDATE_VIEW_ESIMS = 'UPDATE_VIEW_ESIMS'
 const UPDATE_TOTAL_BUNDLES_SOLD = 'UPDATE_TOTAL_BUNDLES_SOLD'
 const UPDATE_COUNTRIES = 'UPDATE_COUNTRIES'
+const UPDATE_PLANS = 'UPDATE_PLANS'
 
 function reducer(state, { type, payload }) {
 
@@ -77,6 +79,14 @@ function reducer(state, { type, payload }) {
       return {
         ...state,
         countries
+      }
+    }
+
+    case UPDATE_PLANS: {
+      const { plans } = payload
+      return {
+        ...state,
+        plans
       }
     }
 
@@ -222,8 +232,31 @@ export async function getOrganisations() {
     return res;
 
   } catch (error) {
-    return {}
     console.log('getOrganisations error', error)
+    return {}
+  }
+}
+
+export async function getPlans() {
+  try {
+    let res = await axios.get(
+      API_BACKEND_URL + 'user/get_plans',
+      {
+        headers: {
+          Authorization: 'Bearer ' + window.localStorage.getItem('token')
+        }
+      }
+    );
+
+    if (res.data.success) {
+      return res.data.plans
+    } else {
+      return []
+    }
+
+  } catch (error) {
+    console.log('getOrganisations error', error)
+    return []
   }
 }
 
@@ -303,6 +336,15 @@ const GlobalProvider = ({ children }) => {
     })
   }, [])
 
+  const updatePlans = useCallback((data) => {
+    dispatch({
+      type: UPDATE_PLANS,
+      payload: {
+        plans: data,
+      },
+    })
+  }, [])
+
   useEffect(() => {
     axios.get(API_URL + 'login',
       {
@@ -314,7 +356,7 @@ const GlobalProvider = ({ children }) => {
 
       window.localStorage.setItem('isAdmin', response.data.isAdmin);
       window.localStorage.setItem('refreshToken', response.data.refreshToken);
-      
+
       window.localStorage.setItem('verified', response.data.verified);
 
       // console.log('token', window.localStorage.getItem('refreshToken'));
@@ -337,16 +379,34 @@ const GlobalProvider = ({ children }) => {
 
         updateGroups(response.data.groups)
 
+        let group = response.data.groups ? response.data.groups[0].name : '';
+        if (group != '') {
+
+          axios.get(`https://api.esim-go.com/v2.1/organisation/groups/${group}/countries`,
+            {
+              params: {
+                group: group
+              },
+              headers: {
+                'X-API-Key': API_KEY,
+                Authorization: 'Bearer ' + window.localStorage.getItem('refreshToken')
+              }
+            }).then((response) => {
+              let countries = response.data.countries || []
+              // let result = {}
+              // for (let i = 0; i < countries.length; i++) {
+              //   result[countries[i].iso] = countries[i].name
+              // }
+              updateCountries(countries)
+            })
+        }
+
       }).catch((error) => {
         console.log('get organisation data error', error);
       })
 
       getViewESimsData((new Date()).getFullYear(), (new Date()).getMonth()).then((result) => {
         updateViewESims(result)
-      })
-
-      axios.get('https://portal.esim-go.com/assets/packages/country_code_picker/i18n/en.json').then((response) => {
-        updateCountries(response.data)
       })
 
     }).catch((error) => {
@@ -367,6 +427,7 @@ const GlobalProvider = ({ children }) => {
             updateViewESims,
             updateTotalBundlesSold,
             updateCountries,
+            updatePlans,
           }
         ],
         [
@@ -378,6 +439,7 @@ const GlobalProvider = ({ children }) => {
           updateViewESims,
           updateTotalBundlesSold,
           updateCountries,
+          updatePlans,
         ]
       )}>
       {children}

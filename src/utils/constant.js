@@ -44,6 +44,14 @@ export const REGION_TYPE_NAME = {
     south: 'South America',
 }
 
+export const PLAN_TYPE = {
+    '1G': '1G / 7Days',
+    '3G': '3G / 30Days',
+    '5G': '5G / 30Days',
+    '10G': '10G / 30Days',
+    '20G': '20G / 30Days',
+}
+
 function clearNumber(value = '') {
     return value.replace(/\D+/g, '')
 }

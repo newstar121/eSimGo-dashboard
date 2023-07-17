@@ -99,25 +99,15 @@ export default function Payment() {
 
   useEffect(() => {
     let result = []
-    let keys = Object.keys(countries)
 
-    for (let i = 0; i < keys.length; i++) {
-      let key = keys[i].toLowerCase()
-      // result.push(
-      //   <option value={keys[i]} key={keys[i]}>
-      //     <Flex align='center'>
-
-      //       <Image src={'https://portal.esim-go.com/assets/packages/intl_phone_number_input/assets/flags/' + keys[i].toLowerCase() + '.png'} alt='flag' />
-      //       {countries[keys[i]].toString()}
-      //     </Flex>
-      //   </option>
-      // )
-
+    for (let i = 0; i < countries.length; i++) {
+      let country = countries[i]
+      let key = country.iso;
       result.push({
         key: key,
         value: key,
         flag: key,
-        text: renderCountry(countries[keys[i]])
+        text: renderCountry(country.name)
       })
     }
     setCountryInfo(result);

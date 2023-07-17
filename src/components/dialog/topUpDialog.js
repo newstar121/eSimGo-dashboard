@@ -54,7 +54,7 @@ export const TopUpDialog = ({ isOpen, handleClose }) => {
 
     const organisation = getOrganisation();
 
-    const balance = organisation?.balance.toFixed(2) || 0.00;
+    const balance = organisation?.balance.toFixed(2) || 0;
     const maxSpend = organisation?.maxSpend.toFixed(2) || 0.00;
     const minimumSpend = organisation?.minimumSpend.toFixed(2) || 0.00;
     const currentSpend = organisation?.currentSpend.toFixed(2) || 0.00;

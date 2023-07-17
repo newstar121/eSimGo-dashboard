@@ -59,7 +59,7 @@ export const BillingDialog = ({ isOpen, handleClose }) => {
     const postcode = organisation?.billingPostcode || ''
     const country = organisation?.country || ''
     const groups = organisation?.groups || []
-    const id = organisation.id || ''
+    const id = organisation?.id || ''
     // const countryName = state?.countries?.countries[country.toLowerCase()] || ''
 
     const onSave = () => {
