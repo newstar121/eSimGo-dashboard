@@ -3,8 +3,8 @@ import Payment from 'payment'
 export const API_KEY = 'RhFtBn4Hx24kXkAZ7GrM1fSmngpsvZnfyHLbhpC8'
 export const API_URL = 'https://api.esim-go.com/v2.2/'
 export const LOGIN_TOKEN = 'YmcubmV3c3RhcjEyMUBnbWFpbC5jb206T2xla3NhbmRyMTIk'
-export const API_BACKEND_URL = 'http://65.21.87.123:5055/api/'
-// export const API_BACKEND_URL = 'http://localhost:5055/api/'
+// export const API_BACKEND_URL = 'http://65.21.87.123:5055/api/'
+export const API_BACKEND_URL = 'http://localhost:5055/api/'
 
 export const USER_ROLE = {
     company: 'company',
