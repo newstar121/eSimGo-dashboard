@@ -30,22 +30,20 @@ import { useGlobalData } from "contexts/AppContext";
 import { getPlans } from "contexts/AppContext";
 import { PlanDialog } from "components/dialog/planDialog";
 import { PLAN_TYPE } from "utils/constant";
+import axios from "axios";
+import { API_BACKEND_URL } from "utils/constant";
+import { AlertDialog } from "components/dialog/alertDialog";
+import { differenceInDays } from "date-fns";
 
 const renderSpeed = (speed) => {
   let result = ''
-  if(speed) {
+  if (speed) {
     result = speed.join('/')
-  } 
+  }
   return result;
 }
 
 const columns = [
-  {
-    name: 'BUNDLE',
-    selector: row => row.description,
-    sortable: true,
-    grow: 40,
-  },
   {
     name: "COUNTRY",
     sortable: true,
@@ -77,6 +75,12 @@ const columns = [
     grow: 20,
   },
   {
+    name: 'BUNDLE',
+    selector: row => row.description,
+    sortable: true,
+    grow: 40,
+  },
+  {
     name: "PRICE",
     sortable: true,
     selector: row => '$' + row.company_price,
@@ -105,21 +109,63 @@ export default function Plan() {
   const [country, setCountry] = useState('')
   const [plan, setPlan] = useState('')
 
+  const [isAlertOpen, setAlertOpen] = useState(false)
+
   useEffect(() => {
 
-    // if (window.localStorage.getItem('isGettingPlan')) return;
-    // window.localStorage.setItem('isGettingPlan', true);
     getPlans().then((result) => {
       updatePlans(result);
-      // window.localStorage.setItem('isGettingPlan', false);
     })
 
+    let currentTime = (new Date()).getTime()
+    let displayTime = window.localStorage.getItem('display-time');
+
+    if(!displayTime || displayTime && differenceInDays(currentTime, displayTime) >=1 ) {
+      setAlertOpen(true)
+    }
+    // for (let i = 0; i < datas.length; i++) {
+    //   let item = datas[i]
+    //   let keys = Object.keys(item)
+    //   let country = item['Country / Region'];
+    //   let roaming = item['Roaming Countries'];
+
+    //   keys.forEach((key) => {
+    //     let matched = key.match(/(\d+)GB\s\/\s(\d+)days/);
+
+    //     if (matched) {
+    //       let amount = matched[1]
+    //       let duration = matched[2]
+    //       let price = item[key]
+
+    //       axios.post(
+    //         API_BACKEND_URL + 'user/add_plan',
+    //         {
+    //           plan: {
+    //             country: country,
+    //             data: amount,
+    //             duration: duration,
+    //             roaming: roaming,
+    //             price: price,
+    //           }
+    //         },
+    //         {
+    //           headers: {
+    //             Accept: '*/*'
+    //           }
+    //         }
+    //       ).then((response) => {
+
+
+    //       })
+    //     }
+    //   })
+    // }
   }, [])
 
   useEffect(() => {
 
     let countryOptions = [<option key='' value=''>All Countries</option>]
-    
+
     countries.forEach((country) => {
       let key = country.iso;
       countryOptions.push(<option key={key} value={key}>{country.name}</option>)
@@ -129,7 +175,7 @@ export default function Plan() {
   }, [countries])
 
   useEffect(() => {
-    if(data.length == 0) return;
+    if (data.length == 0) return;
     if (plan == '' && country == '') {
       setFilterData(data.sort((a, b) => a.country > b.country ? 1 : -1))
     } else if (plan == '' && country !== '') {
@@ -175,6 +221,11 @@ export default function Plan() {
       <PlanDialog
         isOpen={isOpen}
         handleClose={() => { setOpen(false) }}
+        planData={planData}
+      />
+      <AlertDialog
+        isOpen={isAlertOpen}
+        handleClose={() => { setAlertOpen(false) }}
         planData={planData}
       />
       <Box pt={{ base: "130px", md: "80px", xl: "80px" }} pl='20px' pr='20px'>

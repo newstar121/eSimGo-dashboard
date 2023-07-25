@@ -2,61 +2,20 @@
 import { Box, Flex, SimpleGrid, Text, Input, Image, Icon, Button, useDisclosure } from "@chakra-ui/react";
 import React from "react";
 import { useEffect } from "react";
-import axios from "axios";
 import { useState } from "react";
-import { API_URL } from "utils/constant";
-import { API_KEY } from "utils/constant";
 import { useGlobalData } from "contexts/AppContext";
-import { Dropdown } from "semantic-ui-react";
 import { MdAccountBalanceWallet, MdMap } from "react-icons/md";
 import { TopUpDialog } from "components/dialog/topUpDialog";
-import { BillingDialog } from "components/dialog/billingDialog";
-
-const columns = [
-  {
-    Header: "TYPE",
-    accessor: "charge_type",
-  },
-  {
-    Header: "ITEM",
-    accessor: "item",
-  },
-  {
-    Header: "TOTAL",
-    accessor: "total",
-  },
-  {
-    Header: "CURRENCY",
-    accessor: "currency",
-  },
-  {
-    Header: "STATUS",
-    accessor: "status",
-  },
-  {
-    Header: "REFERENCE",
-    accessor: "charge_reference",
-  },
-  {
-    Header: "CREATE DATE",
-    accessor: "createDate",
-  },
-  {
-    Header: "ASSIGNED",
-    accessor: "assigned",
-  },
-  {
-    Header: "ACTIONS",
-    accessor: "action",
-  },
-];
+import { BillingDialog } from "components/dialog/billingDialog"
+import { CountrySelect } from "components/selectOptions/country.component";
 
 export default function Payment() {
 
   const [state] = useGlobalData()
 
-  const [country, setCountry] = useState('');
-  const [countryInfo, setCountryInfo] = useState([])
+  const [country, setCountry] = useState();
+
+  const onSelect = (country) => setCountry(country);
 
   const getOrganisation = () => {
 
@@ -77,9 +36,9 @@ export default function Payment() {
   }
 
   const organisation = getOrganisation();
-  const default_country = organisation?.country.toLowerCase() || ''
-  const countries = state?.countries || {};
 
+  const default_country = organisation?.country.toLowerCase() || ''
+  
   const balance = organisation?.balance || 0;
   const billingName = organisation ? organisation?.billingFirstNames + ' ' + organisation?.billingSurname : '';
   const billingContentStr = organisation ? organisation?.billingAddr1 + ', ' + organisation?.billingAddr2
@@ -88,35 +47,6 @@ export default function Payment() {
   const billingContent = billingContentStr.replace(/,\s,/g, ",")
   const countryCode = organisation?.country || '';
   const vatNo = organisation?.taxNumber.substring(countryCode.length)
-
-  const renderCountry = (country) => {
-    if (Array.isArray(country)) {
-      return country[0]
-    } else {
-      return country
-    }
-  }
-
-  useEffect(() => {
-    let result = []
-
-    for (let i = 0; i < countries.length; i++) {
-      let country = countries[i]
-      let key = country.iso;
-      result.push({
-        key: key,
-        value: key,
-        flag: key,
-        text: renderCountry(country.name)
-      })
-    }
-    setCountryInfo(result);
-
-  }, [countries])
-
-  const handleCountry = (value) => {
-    if (value !== country) setCountry(value)
-  }
 
   const handleSave = () => {
 
@@ -155,22 +85,12 @@ export default function Payment() {
           <SimpleGrid columns={{ base: 1, md: 2, xl: 2 }} gap='20px' mb='10px' mt='10px'>
             <Flex direction='column'>
               <Text fontSize='lg' fontWeight='700' mb='5px'>Country of Registration*</Text>
-              {/* <Select
-              onClick={(e) => handleCountry(e.target.value)}
-              // defaultValue={default_country}
-              value={country ? country : default_country}
-            >
-              {countryInfo}
-            </Select> */}
-              <Dropdown
-                placeholder='Select Country'
-                // fluid
-                search
-                selection
-                value={country ? country : default_country}
-                onClick={(e) => handleCountry(e.target.value)}
-                options={countryInfo}
+
+              <CountrySelect
+                select={country ? (default_country ? default_country : '')  : country}
+                onSelect={onSelect}
               />
+              
             </Flex>
             <Flex justify='space-between'>
               <Flex direction='column' w='30%'>

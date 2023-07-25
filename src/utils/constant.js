@@ -40,7 +40,6 @@ export const REGION_TYPE_NAME = {
     Europe: 'Europe',
     north: 'North America',
     oceania: 'Oceania',
-    africa: 'Africa',
     south: 'South America',
 }
 
