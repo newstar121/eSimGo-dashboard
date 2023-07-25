@@ -8,6 +8,7 @@ import {
   MdLogout,
   MdSimCard,
   MdTravelExplore,
+  MdAppRegistration,
 } from "react-icons/md";
 
 // Admin Imports
@@ -19,7 +20,8 @@ import Payment from "views/admin/payment";
 import Setting from "views/admin/setting";
 // Auth Imports
 import SignInCentered from "views/auth/signIn";
-
+import SignUpCentered from "views/auth/signUp";
+import SignUp from "views/auth/signUp";
 const routes = [
   {
     name: "DASHBOARD",
@@ -99,6 +101,14 @@ const routes = [
     path: "/sign-in",
     icon: <Icon as={MdLogout} width='20px' height='20px' color='inherit' />,
     component: SignInCentered,
+  },
+  {
+    name: "SIGN UP",
+    layout: "/auth",
+    path: "/sign-up",
+    icon: <Icon as={MdAppRegistration} width='20px' height='20px' color='inherit' />,
+    component: SignUp,
+    hidden: true
   },
 ];
 

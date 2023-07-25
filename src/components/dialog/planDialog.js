@@ -1,8 +1,10 @@
 import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Flex, Text, Button, useDisclosure, SimpleGrid, Input, Icon, Image, Avatar } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { MdDetails, MdSimCard } from "react-icons/md";
+import { MdDetails, MdSimCard, MdStart, MdTravelExplore } from "react-icons/md";
 import "react-credit-cards-2/dist/es/styles-compiled.css";
 import { useGlobalData } from "contexts/AppContext";
+import { FaClock, FaDatabase } from "react-icons/fa";
+import { ImMeter } from "react-icons/im";
 
 export const PlanDialog = ({ isOpen, handleClose, planData }) => {
 
@@ -74,13 +76,28 @@ export const PlanDialog = ({ isOpen, handleClose, planData }) => {
                         <Text color='white' fontSize='2xl' textAlign='center'>{data?.description}</Text>
                         <Flex direction='column'>
                             <Flex justify='space-around' w='100%' mb='10'>
-                                <Text color='white' fontSize='2xl' textAlign='center'>{`${data?.dataAmount / 1000}GB`}</Text>
-                                <Text color='white' fontSize='2xl' textAlign='center'>{`${data?.duration} days`}</Text>
-                                <Text color='white' fontSize='2xl' textAlign='center'>{`${data?.roamingEnabled ? data?.roamingEnabled.length : 0} Countries`}</Text>
+                                <Flex direction='column' align='center'>
+                                    <Icon as={FaDatabase} width='30px' height='30px' color='white' />
+                                    <Text color='white' fontSize='2xl' textAlign='center'>{`${data?.dataAmount / 1000}GB`}</Text>
+                                </Flex>
+                                <Flex direction='column' align='center'>
+                                    <Icon as={FaClock} width='30px' height='30px' color='white' />
+                                    <Text color='white' fontSize='2xl' textAlign='center'>{`${data?.duration} days`}</Text>
+                                </Flex>
+                                <Flex direction='column' align='center'>
+                                    <Icon as={MdTravelExplore} width='30px' height='30px' color='white' />
+                                    <Text color='white' fontSize='2xl' textAlign='center'>{`${data?.roamingEnabled ? data?.roamingEnabled.length : 0} Countries`}</Text>
+                                </Flex>
                             </Flex>
                             <Flex justify='space-around'>
-                                <Text color='white' fontSize='2xl' textAlign='center'>{`${renderSpeed(data?.speed)} Data`}</Text>
-                                <Text color='white' fontSize='2xl' textAlign='center'>{`${data?.autostart ? 'AutoStart Enabled' : 'AutoStart Disabled'}`}</Text>
+                                <Flex direction='column' align='center'>
+                                    <Icon as={ImMeter} width='30px' height='30px' color='white' />
+                                    <Text color='white' fontSize='2xl' textAlign='center'>{`${renderSpeed(data?.speed)} Data`}</Text>
+                                </Flex>
+                                <Flex direction='column' align='center'>
+                                    <Icon as={MdStart} width='30px' height='30px' color='white' />
+                                    <Text color='white' fontSize='2xl' textAlign='center'>{`${data?.autostart ? 'AutoStart Enabled' : 'AutoStart Disabled'}`}</Text>
+                                </Flex>
                             </Flex>
                         </Flex>
                     </Flex>

@@ -13,6 +13,7 @@ const UPDATE_VIEW_ESIMS = 'UPDATE_VIEW_ESIMS'
 const UPDATE_TOTAL_BUNDLES_SOLD = 'UPDATE_TOTAL_BUNDLES_SOLD'
 const UPDATE_COUNTRIES = 'UPDATE_COUNTRIES'
 const UPDATE_PLANS = 'UPDATE_PLANS'
+const UPDATE_COUNTRY_FLAGS = 'UPDATE_COUNTRY_FLAGS'
 
 function reducer(state, { type, payload }) {
 
@@ -87,6 +88,14 @@ function reducer(state, { type, payload }) {
       return {
         ...state,
         plans
+      }
+    }
+
+    case UPDATE_COUNTRY_FLAGS: {
+      const { countryFlags } = payload
+      return {
+        ...state,
+        countryFlags
       }
     }
 
@@ -243,7 +252,7 @@ export async function getPlans() {
       API_BACKEND_URL + 'user/get_plans',
       {
         headers: {
-          Authorization: 'Bearer ' + window.localStorage.getItem('token')
+          Authorization: window.localStorage.getItem('token')
         }
       }
     );
@@ -257,6 +266,22 @@ export async function getPlans() {
   } catch (error) {
     console.log('getOrganisations error', error)
     return []
+  }
+}
+
+export async function getCountryFlags() {
+  try {
+    let res = await axios.get(
+      'https://portal.esim-go.com/assets/packages/country_code_picker/i18n/en.json',
+      {
+
+      }
+    );
+    return res.data || {}
+
+  } catch (error) {
+    console.log('getCountryFlags error', error)
+    return {}
   }
 }
 
@@ -345,6 +370,15 @@ const GlobalProvider = ({ children }) => {
     })
   }, [])
 
+  const updateCountryFlags = useCallback((data) => {
+    dispatch({
+      type: UPDATE_COUNTRY_FLAGS,
+      payload: {
+        countryFlags: data,
+      },
+    })
+  }, [])
+
   useEffect(() => {
     axios.get(API_URL + 'login',
       {
@@ -407,6 +441,14 @@ const GlobalProvider = ({ children }) => {
 
       getViewESimsData((new Date()).getFullYear(), (new Date()).getMonth()).then((result) => {
         updateViewESims(result)
+      })
+
+      getPlans().then((result) => {
+        updatePlans(result);
+      })
+
+      getCountryFlags().then((result) => {
+        updateCountryFlags(result)
       })
 
     }).catch((error) => {
