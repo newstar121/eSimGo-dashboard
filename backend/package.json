@@ -1,0 +1,38 @@
+{
+  "name": "esimgo-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "nodemon server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/newstar121/eSimGo-backend.git"
+  },
+  "keywords": [
+    "nodejs",
+    "express",
+    "mysql",
+    "rest",
+    "api",
+    "esim"
+  ],
+  "author": "newstar121",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/newstar121/eSimGo-backend/issues"
+  },
+  "homepage": "https://github.com/newstar121/eSimGo-backend#readme",
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "mysql2": "^3.5.1",
+    "nodemon": "^3.0.1",
+    "passport": "^0.6.0",
+    "passport-jwt": "^4.0.1",
+    "sequelize": "^6.32.1"
+  }
+}
