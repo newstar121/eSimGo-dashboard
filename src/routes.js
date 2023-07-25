@@ -20,7 +20,6 @@ import Payment from "views/admin/payment";
 import Setting from "views/admin/setting";
 // Auth Imports
 import SignInCentered from "views/auth/signIn";
-import SignUpCentered from "views/auth/signUp";
 import SignUp from "views/auth/signUp";
 const routes = [
   {
@@ -30,28 +29,6 @@ const routes = [
     icon: <Icon as={MdDashboard} width='20px' height='20px' color='inherit' />,
     component: MainDashboard,
   },
-  // {
-  //   name: "BUY DATA BUNDLES",
-  //   layout: "/admin",
-  //   path: "/nft-marketplace",
-  //   icon: (
-  //     <Icon
-  //       as={MdAddCircleOutline}
-  //       width='20px'
-  //       height='20px'
-  //       color='inherit'
-  //     />
-  //   ),
-  //   component: NFTMarketplace,
-  //   secondary: true,
-  // },
-  // {
-  //   name: "TOP-UP ACCOUNT",
-  //   layout: "/admin",
-  //   icon: <Icon as={MdAccountBalanceWallet} width='20px' height='20px' color='inherit' />,
-  //   path: "/data-tables",
-  //   component: DataTables,
-  // },
   {
     name: "EDIT PROFILE",
     layout: "/admin",
@@ -67,20 +44,6 @@ const routes = [
     icon: <Icon as={MdSimCard} width='20px' height='20px' color='inherit' />,
     component: SimsTable,
   },
-  // {
-  //   name: "VIEW CHARGES",
-  //   layout: "/admin",
-  //   path: "/charge",
-  //   icon: <Icon as={MdCreditCard} width='20px' height='20px' color='inherit' />,
-  //   component: OrderTable,
-  // },
-  // {
-  //   name: "REPORTS",
-  //   layout: "/admin",
-  //   path: "/report",
-  //   icon: <Icon as={MdHistoryEdu} width='20px' height='20px' color='inherit' />,
-  //   component: DataTables,
-  // },
   {
     name: "BILLING & PAYMENT",
     layout: "/admin",

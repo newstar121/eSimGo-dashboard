@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const keys = require('../../keys');
 const Constants = require("../../utils/constants");
-const { default: axios } = require("axios");
+const { axios } = require("axios");
 // Create and Save a new Plan
 exports.create = (req, res) => {
     // Validate request

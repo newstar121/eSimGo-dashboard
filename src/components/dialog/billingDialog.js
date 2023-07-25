@@ -1,8 +1,7 @@
 import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Flex, Text, Button, useDisclosure, SimpleGrid, Input, Icon, Image } from "@chakra-ui/react";
 import { useGlobalData } from "contexts/AppContext";
-import { useEffect, useState } from "react";
+import { useEffect} from "react";
 import { MdPerson } from "react-icons/md";
-import "react-credit-cards-2/dist/es/styles-compiled.css";
 import axios from "axios";
 import { API_URL } from "utils/constant";
 import { getOrganisations } from "contexts/AppContext";

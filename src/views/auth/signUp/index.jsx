@@ -52,6 +52,7 @@ import { USER_ROLE } from "utils/constant";
 import axios from "axios";
 import { API_BACKEND_URL } from "utils/constant";
 import { CountrySelect } from "components/selectOptions/country.component";
+import { NotificationContainer, NotificationManager } from "react-notifications";
 
 function SignUp() {
   // Chakra color mode
@@ -89,6 +90,23 @@ function SignUp() {
 
   const onSignUp = async () => {
 
+    if(!firstName || firstName.length < 8) {
+      NotificationManager.warning('First name length should be more than 8.')
+      return;
+    }
+    if(!lastName || lastName.length < 8) {
+      NotificationManager.warning('First name length should be more than 8.')
+      return;
+    }
+    if(password != confirmPassword) {
+      NotificationManager.warning('Password is not matched.')
+      return;
+    }
+    if(password.length < 8) {
+      NotificationManager.warning('Password length should be more than 8.')
+      return;
+    }
+
     axios.post(
       API_BACKEND_URL + 'auth/register',
       {
@@ -106,12 +124,15 @@ function SignUp() {
     ).then((response) => {
 
       if (response.data.success) {
+        NotificationManager.success('Sign up success.')
         history.push('/admin/sign-in')
       } else {
+        NotificationManager.error(response.data.msg)
         history.push('/admin/sign-up')
       }
 
     }).catch(error => {
+      NotificationManager.error('Sign up failed')
       console.log('login error', error)
       history.push('/admin/sign-up')
     });
@@ -120,6 +141,7 @@ function SignUp() {
 
   return (
     <DefaultAuth illustrationBackground={illustration} image={illustration}>
+      <NotificationContainer/>
       <Flex
         maxW={{ base: "100%", md: "max-content" }}
         w='100%'
@@ -130,20 +152,20 @@ function SignUp() {
         justifyContent='center'
         mb={{ base: "30px", md: "60px" }}
         px={{ base: "25px", md: "0px" }}
-        mt={{ base: "40px", md: "14vh" }}
+        mt={{ base: "30px", md: "10vh" }}
         flexDirection='column'>
-        <Box me='auto'>
+        <Box me='auto' mb={10}>
           <Heading color={textColor} fontSize='36px' mb='10px'>
             Sign Up
           </Heading>
-          <Text
+          {/* <Text
             mb='36px'
             ms='4px'
             color={textColorSecondary}
             fontWeight='400'
             fontSize='md'>
             Fill inputs to sign up!
-          </Text>
+          </Text> */}
         </Box>
         <Flex
           zIndex='2'
@@ -155,7 +177,7 @@ function SignUp() {
           mx={{ base: "auto", lg: "unset" }}
           me='auto'
           mb={{ base: "20px", md: "20px" }}>
-          <Button
+          {/* <Button
             fontSize='sm'
             me='0px'
             mb='26px'
@@ -170,14 +192,14 @@ function SignUp() {
             _focus={googleActive}>
             <Icon as={FcGoogle} w='20px' h='20px' me='10px' />
             Sign up with Google
-          </Button>
-          <Flex align='center' mb='25px'>
+          </Button> */}
+          {/* <Flex align='center' mb='25px'>
             <HSeparator />
             <Text color='gray.400' mx='14px'>
               or
             </Text>
             <HSeparator />
-          </Flex>
+          </Flex> */}
           <FormControl>
             <Flex align='center'>
               <Flex direction='column' flex={1} mr={2}>
@@ -192,7 +214,7 @@ function SignUp() {
                 </FormLabel>
                 <Input
                   isRequired={true}
-                  value={email}
+                  value={firstName}
                   onChange={(e) => { setFirstName(e.target.value) }}
                   variant='auth'
                   fontSize='sm'
@@ -215,7 +237,7 @@ function SignUp() {
                 </FormLabel>
                 <Input
                   isRequired={true}
-                  value={email}
+                  value={lastName}
                   onChange={(e) => { setLastName(e.target.value) }}
                   variant='auth'
                   fontSize='sm'
@@ -259,11 +281,12 @@ function SignUp() {
               Country of Registration<Text color={brandStars}>*</Text>
             </FormLabel>
             <CountrySelect
-              select={country ? (default_country ? default_country : '') : country}
+              select={country}
               onSelect={onSelect}
             />
             <FormLabel
               ms='4px'
+              mt={4}
               fontSize='sm'
               fontWeight='500'
               color={textColor}
@@ -336,7 +359,7 @@ function SignUp() {
                   Keep me logged in
                 </FormLabel>
               </FormControl>
-              <NavLink to='/auth/forgot-password'>
+              <NavLink to='/auth/sign-up'>
                 <Text
                   color={textColorBrand}
                   fontSize='sm'

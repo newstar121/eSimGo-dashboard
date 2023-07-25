@@ -1,7 +1,6 @@
 import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Flex, Text, Button, useDisclosure, SimpleGrid, Input, Icon, Image, Avatar } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { MdDetails, MdSimCard, MdStart, MdTravelExplore } from "react-icons/md";
-import "react-credit-cards-2/dist/es/styles-compiled.css";
+import { MdStart, MdTravelExplore } from "react-icons/md";
 import { useGlobalData } from "contexts/AppContext";
 import { FaClock, FaDatabase } from "react-icons/fa";
 import { ImMeter } from "react-icons/im";

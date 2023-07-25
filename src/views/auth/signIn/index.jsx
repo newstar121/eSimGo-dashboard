@@ -237,7 +237,7 @@ function SignIn() {
                   Keep me logged in
                 </FormLabel>
               </FormControl>
-              <NavLink to='/auth/forgot-password'>
+              <NavLink to='/auth/sign-in'>
                 <Text
                   color={textColorBrand}
                   fontSize='sm'
