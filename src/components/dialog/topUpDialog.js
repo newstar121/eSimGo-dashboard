@@ -4,9 +4,6 @@ import { useEffect, useState } from "react";
 import { MdCreditCard, MdEventBusy, MdMap, MdMoreHoriz, MdPerson } from "react-icons/md";
 import Cards from "react-credit-cards-2";
 import "react-credit-cards-2/dist/es/styles-compiled.css";
-import { formatCreditCardNumber } from "utils/constant";
-import { formatExpirationDate } from "utils/constant";
-import { formatCVC } from "utils/constant";
 import { getOrganisationBalance } from "contexts/AppContext";
 import { getOrganisations } from "contexts/AppContext";
 

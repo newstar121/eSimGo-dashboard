@@ -9,11 +9,11 @@ import { ChakraProvider } from '@chakra-ui/react';
 import theme from 'theme/theme';
 import { ThemeEditorProvider } from '@hypertheme-editor/chakra-ui';
 import AppProvider from './contexts/AppContext';
+import 'react-notifications/lib/notifications.css';
 
-const styleLink = document.createElement("link");
-styleLink.rel = "stylesheet";
-styleLink.href = "https://cdn.jsdelivr.net/npm/semantic-ui/dist/semantic.min.css";
-document.head.appendChild(styleLink);
+// const styleLink = document.createElement("link");
+// styleLink.rel = "stylesheet";
+// document.head.appendChild(styleLink);
 
 ReactDOM.render(
 	<AppProvider>

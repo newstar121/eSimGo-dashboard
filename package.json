@@ -37,6 +37,7 @@
     "react-flags-select": "^2.2.3",
     "react-icons": "^4.3.1",
     "react-is": "^18.0.0",
+    "react-notifications": "^1.7.4",
     "react-router-dom": "^5.3.0",
     "react-scripts": "5.0.0",
     "react-table": "^7.7.0",
