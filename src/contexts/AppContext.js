@@ -264,7 +264,7 @@ export async function getPlans() {
     }
 
   } catch (error) {
-    console.log('getOrganisations error', error)
+    console.log('getPlans error', error)
     return []
   }
 }
@@ -397,7 +397,7 @@ const GlobalProvider = ({ children }) => {
       // GET CURRENT USER
 
       getOrganisations().then((response) => {
-        updateOrganisations(response.data.organisations)
+        updateOrganisations(response.data.organisations || [])
         updateUser(response.data.user)
       })
 

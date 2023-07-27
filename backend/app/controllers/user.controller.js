@@ -125,35 +125,20 @@ exports.findOneByUsernameAndPassword = (req, res) => {
         if (user) {
             bcrypt.compare(password, user.password).then(isMatch => {
                 if (isMatch) {
-                    // Get API token from eSIMGO
-                    // const base64EncodedString = Buffer.from(user.username + ':' + user.password, 'utf-8').toString('base64');
-                    // axios.get(Constants.API_URL + 'login',
-                    //     {
-                    //         headers: {
-                    //             'Authorization': 'Basic ' + base64EncodedString,
-                    //         }
-                    //     }
-                    // ).then((response) => {
-                        // Sign Token
-                        const payload = { id: user.id, username: user.username, role: user.role }; // Create JWT Payload
-                        jwt.sign(
-                            payload,
-                            keys.secretOrKey,
-                            { expiresIn: 3600 },
-                            (err, token) => {
-                                res.send({
-                                    success: true,
-                                    token: 'Bearer ' + token
-                                });
-                            }
-                        );
-                    // }).catch(error => {
-                    //     res.status(201).send({
-                    //         success: false,
-                    //         message: 'Login eSIMGO failed'
-                    //     });
-                    //     console.log('get API token from eSIMGO error', error);
-                    // })
+
+                    // Sign Token
+                    const payload = { id: user.id, username: user.username, role: user.role }; // Create JWT Payload
+                    jwt.sign(
+                        payload,
+                        keys.secretOrKey,
+                        { expiresIn: 3600 },
+                        (err, token) => {
+                            res.send({
+                                success: true,
+                                token: 'Bearer ' + token
+                            });
+                        }
+                    );
 
                 } else {
                     res.status(201).send({

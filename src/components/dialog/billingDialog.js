@@ -1,6 +1,6 @@
 import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Flex, Text, Button, useDisclosure, SimpleGrid, Input, Icon, Image } from "@chakra-ui/react";
 import { useGlobalData } from "contexts/AppContext";
-import { useEffect} from "react";
+import { useEffect } from "react";
 import { MdPerson } from "react-icons/md";
 import axios from "axios";
 import { API_URL } from "utils/constant";
@@ -126,7 +126,7 @@ export const BillingDialog = ({ isOpen, handleClose }) => {
             }
         ).then(() => {
             getOrganisations().then((response) => {
-                updateOrganisations(response.data.organisations)
+                updateOrganisations(response.data.organisations || [])
                 updateUser(response.data.user)
             })
         })

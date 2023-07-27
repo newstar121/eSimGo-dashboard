@@ -84,11 +84,17 @@ export default function Settings() {
   const simData = state?.eSimData || [];
 
   useEffect(() => {
-    if (!simData ) {
+    if (!simData) {
       getViewESimsData(year, month).then((result) => {
         updateViewESims(result)
       })
     }
+  }, [])
+
+  useEffect(() => {
+    getViewESimsData(year, month).then((result) => {
+      updateViewESims(result)
+    })
   }, [year, month])
 
   const handleYear = (year) => {
