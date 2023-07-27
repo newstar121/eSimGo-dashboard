@@ -8,6 +8,7 @@ const jwt = require('jsonwebtoken')
 
 // Create and Save a new Plan
 exports.create = (req, res) => {
+
     const plan = {
         country: req.body.plan.country,
         data: req.body.plan.data,
@@ -25,14 +26,15 @@ exports.create = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
+                success: false,
                 message: "Some error occurred while creating a User."
             });
         });
 };
 
 // Retrieve all Plans from the database.
-exports.findAll = (req, res) => {
 
+exports.findAll = (req, res) => {
 
     const country = req.query.country;
 
@@ -43,8 +45,11 @@ exports.findAll = (req, res) => {
     Plan.findAll({
         where: condition
     }).then(async (data) => {
+
         let plans = []
+
         try {
+
             let response = await axios.get(API_URL + 'organisation/groups',
                 {
                     headers: {
@@ -104,7 +109,11 @@ exports.findAll = (req, res) => {
 
             plans = [].concat(bundles);
         } catch (error) {
-            console.log('eSim API call error', error)
+            console.log('eSIMeSi API call error', error)
+            return res.status(500).send({
+                success: false,
+                message: 'eSIM API call error'
+            });
         }
 
         res.send({
@@ -114,6 +123,7 @@ exports.findAll = (req, res) => {
 
     }).catch(err => {
         res.status(500).send({
+            success: false,
             message:
                 err.message || "Some error occurred while retrieving plans."
         });
