@@ -5,91 +5,163 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const keys = require('../../keys');
 const Constants = require("../../utils/constants");
-const { axios } = require("axios");
-// Create and Save a new Plan
+
+// Create a new user
+
 exports.create = (req, res) => {
     // Validate request
-    if (!req.body.username) {
-        res.status(400).send({
+
+    if (!req.body.firstName || req.body.firstName.length == 0) {
+        return res.status(201).send({
             success: false,
-            message: "Username is empty!"
+            message: "FirstName is empty!"
         });
-        return;
     }
 
-    if (!req.body.password) {
-        res.status(400).send({
+    if (!req.body.lastName || req.body.lastName.length == 0) {
+        return res.status(201).send({
+            success: false,
+            message: "LastName is empty!"
+        });
+    }
+
+    if (!req.body.email || req.body.email.length == 0) {
+        return res.status(201).send({
+            success: false,
+            message: "Email is empty!"
+        });
+    }
+
+    if (!req.body.email.match(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/)) {
+        return res.status(201).send({
+            success: false,
+            message: "Email is invalid"
+        });
+    }
+
+    if (!req.body.country || req.body.country.length == 0) {
+        return res.status(201).send({
+            success: false,
+            message: "Country is empty!"
+        });
+    }
+
+    if (!req.body.password || req.body.password.length == 0) {
+        return res.status(201).send({
             success: false,
             message: "Password is empty!"
         });
-        return;
     }
 
-    const { username, password, role } = req.body;
+    const { firstName, lastName, email, country, password } = req.body;
 
-    // Create a User
-
-    bcrypt.genSalt(10, (error, salt) => {
-        bcrypt.hash(password, salt, (err, hash) => {
-            if (err) throw err;
-            const user = {
-                username: username,
-                password: hash,
-                role: role ? role : Constants.USER_ROLE.user
-            };
-
-            // Save Tutorial in the database
-            User.create(user)
-                .then(data => {
-                    res.send({
-                        success: true,
-                    });
-                })
-                .catch(err => {
-                    res.status(500).send({
-                        message: "Some error occurred while creating a User."
-                    });
+    try {
+        const condition = { username: username };
+        User.findOne({
+            where: condition
+        }).then(data => {
+            if (data) {
+                return res.status(201).send({
+                    success: false,
+                    message: "User already exist."
                 });
+            } else {
+                // Create a User
+
+                bcrypt.genSalt(10, (error, salt) => {
+                    if (error) {
+                        console.log('bcrypt genSalt error', error)
+                        return res.status(404).send({
+                            success: false,
+                            message: "bycrypt genSalt error."
+                        });
+                    }
+                    bcrypt.hash(password, salt, (err, hash) => {
+                        if (err) throw err;
+                        const user = {
+                            firstName: firstName,
+                            lastName: lastName,
+                            username: email,
+                            password: hash,
+                            country: country,
+                            role: Constants.USER_ROLE.user
+                        };
+
+                        // Save Tutorial in the database
+                        User.create(user)
+                            .then(data => {
+                                res.send({
+                                    success: true,
+                                });
+                            })
+                            .catch(err => {
+                                res.status(500).send({
+                                    success: false,
+                                    message: "Some error occurred while creating a User."
+                                });
+                            });
+                    })
+                })
+            }
         })
-    })
+    } catch (error) {
+        return res.status(500).send({
+            success: false,
+            message: "Some error occurred while creating a User."
+        });
+    }
 };
 
-// Retrieve all Plans from the database.
+// Get all users
+
 exports.findAll = (req, res) => {
+
     const username = req.query.username;
     var condition = username ? { username: username } : null;
 
     User.findAll({ where: condition })
-        .then(data => {
-            res.send(data);
+        .then(users => {
+            res.send({
+                success: false,
+                users: users,
+            });
         })
         .catch(err => {
             res.status(500).send({
+                success: false,
                 message:
                     err.message || "Some error occurred while retrieving tutorials."
             });
         });
 };
 
-// Find a single Plan with an id
-exports.findOne = (req, res) => {
-    //     const id = req.params.id;
+// Find a single user by id
 
-    //   User.findByPk(id)
-    //     .then(data => {
-    //       if (data) {
-    //         res.send(data);
-    //       } else {
-    //         res.status(404).send({
-    //           message: `Cannot find Tutorial with id=${id}.`
-    //         });
-    //       }
-    //     })
-    //     .catch(err => {
-    //       res.status(500).send({
-    //         message: "Error retrieving Tutorial with id=" + id
-    //       });
-    //     });
+exports.findOne = (req, res) => {
+
+    const id = req.params.id;
+
+    User.findByPk(id)
+        .then(user => {
+
+            if (user) {
+                res.send({
+                    success: true,
+                    user: user
+                });
+            } else {
+                res.status(404).send({
+                    success: false,
+                    message: `Cannot find user with id=${id}.`
+                });
+            }
+        })
+        .catch(err => {
+            res.status(500).send({
+                success: false,
+                message: "Error finding user with id=" + id
+            });
+        });
 
 };
 
@@ -118,7 +190,7 @@ exports.findAllPublished = (req, res) => {
 exports.findOneByUsernameAndPassword = (req, res) => {
     const { username, password } = req.body;
 
-    var condition = username ? { username: username } : null;
+    const condition = username ? { username: username } : null;
     User.findOne({
         where: condition
     }).then(user => {
@@ -149,11 +221,13 @@ exports.findOneByUsernameAndPassword = (req, res) => {
             });
         } else {
             res.status(404).send({
+                success: false,
                 message: `Cannot find User with username=${username}.`
             });
         }
     }).catch(err => {
         res.status(500).send({
+            success: false,
             message: "Error retrieving User with username=" + username
         });
     });

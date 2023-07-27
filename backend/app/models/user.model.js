@@ -2,6 +2,15 @@ const Constants = require("../../utils/constants");
 
 module.exports = (sequelize, Sequelize) => {
     const User = sequelize.define("user", {
+        firstName: {
+            type: Sequelize.STRING
+        },
+        lastName: {
+            type: Sequelize.STRING
+        },
+        country: {
+            type: Sequelize.STRING
+        },
         username: {
             type: Sequelize.STRING
         },
