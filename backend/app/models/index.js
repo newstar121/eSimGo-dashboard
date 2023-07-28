@@ -21,5 +21,9 @@ db.sequelize = sequelize;
 
 db.plans = require("./plans.model.js")(sequelize, Sequelize);
 db.user = require("./user.model.js")(sequelize, Sequelize);
+db.billing = require("./billing.model.js")(sequelize, Sequelize);
+db.esim = require('./esim.model.js')(sequelize, Sequelize);
+db.bag = require('./bag.model.js')(sequelize, Sequelize);
+db.history = require('./history.model.js')(sequelize, Sequelize);
 
 module.exports = db;

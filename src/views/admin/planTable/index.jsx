@@ -21,7 +21,7 @@
 */
 
 // Chakra imports
-import { Box, Button, Flex, Select, Text, filter } from "@chakra-ui/react";
+import { Box, Button, Flex, Icon, Select, Text, filter } from "@chakra-ui/react";
 import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
@@ -34,6 +34,7 @@ import axios from "axios";
 import { API_BACKEND_URL } from "utils/constant";
 import { AlertDialog } from "components/dialog/alertDialog";
 import { differenceInDays } from "date-fns";
+import { MdAddShoppingCart, MdShoppingCart } from "react-icons/md";
 
 const renderSpeed = (speed) => {
   let result = ''
@@ -41,6 +42,44 @@ const renderSpeed = (speed) => {
     result = speed.join('/')
   }
   return result;
+}
+
+const onClickBuy = (row) => {
+  axios.post(
+    API_BACKEND_URL + 'user/buy',
+    {
+      name : row.name
+    }
+  ).then((result) => {
+    
+    if(result.data.success) {
+
+    } else {
+
+    }
+
+  }).catch((error) => {
+    console.log('esim buy error', error)
+  })
+}
+
+const onClickAddCart = (row) => {
+  axios.post(
+    API_BACKEND_URL + 'user/add_cart',
+    {
+      name : row.name
+    }
+  ).then((result) => {
+    
+    if(result.data.success) {
+
+    } else {
+
+    }
+
+  }).catch((error) => {
+    console.log('esim buy error', error)
+  })
 }
 
 const columns = [
@@ -89,9 +128,12 @@ const columns = [
   {
     name: "ACTION",
     accessor: "action",
-    selector: row => {
-      <Button>Buy</Button>
-    },
+    cell: row =>
+      <Flex>
+        <Icon as={MdShoppingCart} width='25px' height='25px' color='inherit' className="icon-hover" mr={2} onClick={(e) => onClickBuy(row)} />
+        <Icon as={MdAddShoppingCart} width='25px' height='25px' color='inherit' className="icon-hover" onClick={(e) => onClickAddCart(row)} />
+      </Flex>
+
   },
 ];
 
@@ -122,7 +164,7 @@ export default function Plan() {
     let currentTime = (new Date()).getTime()
     let displayTime = window.localStorage.getItem('display-time');
 
-    if(!displayTime || displayTime && differenceInDays(currentTime, displayTime) >=1 ) {
+    if (!displayTime || displayTime && differenceInDays(currentTime, displayTime) >= 1) {
       setAlertOpen(true)
     }
     // for (let i = 0; i < datas.length; i++) {

@@ -58,7 +58,7 @@ import TopBundleTable from "views/admin/default/components/TopBundleTable";
 import DailyTraffic from "views/admin/default/components/DailyTraffic";
 import PieCard from "views/admin/default/components/PieCard";
 import CostOfBundle from "views/admin/default/components/CostOfBundle";
-import { getTotalBundlesSold } from "contexts/AppContext";
+import { getTotalBundlesSold, getOrganisations } from "contexts/AppContext";
 import { useGlobalData } from "contexts/AppContext";
 
 const columns = [
@@ -104,8 +104,8 @@ export default function UserReports() {
   const [thisPeriodBundlesSold, setThisPeriodBundlesSold] = useState([])
   const [previousPeriodBundlesSold, setPreviousPeriodBundlesSold] = useState([])
 
-  const [state, {updateTotalBundlesSold}] = useGlobalData();
-  
+  const [state, { updateTotalBundlesSold, updateOrganisations, updateUser }] = useGlobalData();
+
   const thisPeriodTotalBundlesSold = state?.totalBundlesSold?.thisPeriodTotalBundlesSold || 0;
   const percentageDifference = state?.totalBundlesSold?.percentageDifference || 0;
 
@@ -260,6 +260,11 @@ export default function UserReports() {
 
     // BUNDLES PURCHASED BY REGION
     // getBundlesPurchasedByRegion()
+
+    getOrganisations().then((response) => {
+      updateOrganisations(response?.data?.organisations || [])
+      updateUser(response.data.user)
+    })
 
   }, [])
 

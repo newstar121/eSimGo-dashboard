@@ -166,8 +166,8 @@ export async function getViewESimsData(year, month) {
           result.push(Object.assign({}, response.data.esims[i], {
             id: no,
             country: country,
-            dataUsage: (initialQuantity / Math.pow(10, 9)) + 'GB / ' + (remainingQuantity / Math.pow(10, 9)).toFixed(2) + 'GB',
-            expireDate: differenceInDays(new Date(endTime), new Date()) + 'Days Left',
+            dataUsage: ((remainingQuantity / Math.pow(10, 9)) || 0).toFixed(2) + 'GB / ' + ((initialQuantity / Math.pow(10, 9)) || 0) + 'GB',
+            expireDate: (differenceInDays(new Date(endTime), new Date()) || 0) + ' Days Left',
           }))
           no++
         }
@@ -230,7 +230,7 @@ export async function getOrganisations() {
     let res = await axios.get(API_BACKEND_URL + 'user/get_organisations/',
       {
         headers: {
-          Authorization: 'Bearer ' + window.localStorage.getItem('token')
+          Authorization: window.localStorage.getItem('token')
         }
       }
     );
@@ -239,7 +239,7 @@ export async function getOrganisations() {
   } catch (error) {
     console.log('getOrganisations error', error)
     return {
-      data : {}
+      data: {}
     }
   }
 }
@@ -390,14 +390,6 @@ const GlobalProvider = ({ children }) => {
       window.localStorage.setItem('refreshToken', response.data.refreshToken);
 
       window.localStorage.setItem('verified', response.data.verified);
-
-      // console.log('token', window.localStorage.getItem('refreshToken'));
-      // GET CURRENT USER
-
-      getOrganisations().then((response) => {
-        updateOrganisations(response?.data?.organisations || [])
-        updateUser(response.data.user)
-      })
 
       // GET GROUPS
       axios.get(API_URL + 'organisation/groups',
