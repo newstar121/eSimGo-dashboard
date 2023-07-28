@@ -1,9 +1,6 @@
 const db = require("../models");
 const User = db.user;
-const Op = db.Sequelize.Op;
-const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
-const keys = require('../../keys');
+const jwt_decode = require('jwt-decode');
 const Constants = require("../../utils/constants");
 const { axios } = require("axios");
 
@@ -11,8 +8,7 @@ exports.getOrganisation = (req, res) => {
 
     const authHeader = req.headers.authorization;
     const token = authHeader.split(' ')[1];
-
-    const decoded = jwt.verify(token, keys.secretOrKey);
+    const decoded = jwt_decode(token);
     const userId = decoded.id;
 
     try {
@@ -26,15 +22,38 @@ exports.getOrganisation = (req, res) => {
         //         }
         //     }
         // ).then((response) => {
-        axios.get(Constants.API_URL + 'organisation',
-            {
-                headers: {
-                    'X-API-Key': Constants.API_KEY
-                }
-            }
-        ).then(async (organisation) => {
+        User.findByPk(userId)
+            .then(async user => {
 
-        });
+                if (user) {
+                    let res = await axios.get(Constants.API_URL + 'organisation',
+                        {
+                            headers: {
+                                'X-API-Key': Constants.API_KEY
+                            }
+                        }
+                    )
+
+                    let organisations = res.data.organisations;
+
+                    res.send({
+                        success: true,
+                        organisations: organisations,
+                        user: user
+                    });
+                } else {
+                    res.status(404).send({
+                        success: false,
+                        message: `Cannot find user with id=${id}.`
+                    });
+                }
+            })
+            .catch(err => {
+                res.status(500).send({
+                    success: false,
+                    message: "Error finding user with id=" + id
+                });
+            });
 
         // }).catch(error => {
         //     res.status(201).send({

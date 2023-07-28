@@ -21,7 +21,7 @@
 */
 
 // Chakra imports
-import { Box, Flex, Select, Text, filter } from "@chakra-ui/react";
+import { Box, Button, Flex, Select, Text, filter } from "@chakra-ui/react";
 import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
@@ -86,11 +86,13 @@ const columns = [
     selector: row => '$' + row.company_price,
     grow: 10,
   },
-  // {
-  //   name: "ACTION",
-  //   accessor: "action",
-  //   selector: row => row.action,
-  // },
+  {
+    name: "ACTION",
+    accessor: "action",
+    selector: row => {
+      <Button>Buy</Button>
+    },
+  },
 ];
 
 export default function Plan() {

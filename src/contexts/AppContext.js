@@ -159,9 +159,9 @@ export async function getViewESimsData(year, month) {
             });
 
           let bundles = res.data.bundles;
-          let initialQuantity = bundles?.[0].assignments?.[0].initialQuantity;
-          let remainingQuantity = bundles?.[0].assignments?.[0]?.remainingQuantity;
-          let endTime = bundles?.[0].assignments?.[0]?.endTime;
+          let initialQuantity = bundles?.[0]?.assignments?.[0].initialQuantity;
+          let remainingQuantity = bundles?.[0]?.assignments?.[0]?.remainingQuantity;
+          let endTime = bundles?.[0]?.assignments?.[0]?.endTime;
 
           result.push(Object.assign({}, response.data.esims[i], {
             id: no,
@@ -227,14 +227,10 @@ export async function getTotalBundlesSold(filterBy = null) {
 
 export async function getOrganisations() {
   try {
-    let res = await axios.get(API_URL + 'organisations/current',
+    let res = await axios.get(API_BACKEND_URL + 'user/get_organisations/',
       {
-        params: {
-          id: 'current'
-        },
         headers: {
-          'X-API-Key': API_KEY,
-          Authorization: 'Bearer ' + window.localStorage.getItem('refreshToken')
+          Authorization: 'Bearer ' + window.localStorage.getItem('token')
         }
       }
     );
@@ -242,7 +238,9 @@ export async function getOrganisations() {
 
   } catch (error) {
     console.log('getOrganisations error', error)
-    return {}
+    return {
+      data : {}
+    }
   }
 }
 
@@ -397,7 +395,7 @@ const GlobalProvider = ({ children }) => {
       // GET CURRENT USER
 
       getOrganisations().then((response) => {
-        updateOrganisations(response.data.organisations || [])
+        updateOrganisations(response?.data?.organisations || [])
         updateUser(response.data.user)
       })
 

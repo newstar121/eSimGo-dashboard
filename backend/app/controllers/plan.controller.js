@@ -1,10 +1,9 @@
-const keys = require("../../keys");
 const { API_URL, API_KEY, USER_ROLE } = require("../../utils/constants");
 const db = require("../models");
 const Plan = db.plans;
 const Op = db.Sequelize.Op;
 const axios = require('axios')
-const jwt = require('jsonwebtoken')
+const jwt_decode = require('jwt-decode');
 
 // Create and Save a new Plan
 exports.create = (req, res) => {
@@ -77,8 +76,7 @@ exports.findAll = (req, res) => {
 
             const authHeader = req.headers.authorization;
             const token = authHeader.split(' ')[1];
-
-            const decoded = jwt.verify(token, keys.secretOrKey);
+            const decoded = jwt_decode(token);
             const role = decoded.role || USER_ROLE.user;
 
             for (let i = 0; i < bundles.length; i++) {

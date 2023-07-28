@@ -348,7 +348,7 @@ export default function CostOfBundle(props) {
             <Flex align='center'>
               <Box h='8px' w='8px' bg='#39B8FF' borderRadius='50%' me='4px' />
               <Text
-                fontSize='xs'
+                fontSize='md'
                 color='secondaryGray.600'
                 fontWeight='700'
                 >
@@ -358,7 +358,7 @@ export default function CostOfBundle(props) {
             <Flex align='center'>
               <Box h='8px' w='8px' bg='brand.500' borderRadius='50%' me='4px' />
               <Text
-                fontSize='xs'
+                fontSize='md'
                 color='secondaryGray.600'
                 fontWeight='700'
                 >
@@ -368,7 +368,7 @@ export default function CostOfBundle(props) {
             <Flex align='center'>
               <Box h='8px' w='8px' bg='#444444' borderRadius='50%' me='4px' />
               <Text
-                fontSize='xs'
+                fontSize='md'
                 color='secondaryGray.600'
                 fontWeight='700'
                 >

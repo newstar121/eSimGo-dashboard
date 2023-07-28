@@ -90,14 +90,20 @@ function SignUp() {
 
   const onSignUp = async () => {
 
-    if(!firstName || firstName.length < 8) {
-      NotificationManager.warning('First name length should be more than 8.')
+    if(!firstName || firstName.length == 0) {
+      NotificationManager.warning('Enter firstname')
       return;
     }
-    if(!lastName || lastName.length < 8) {
-      NotificationManager.warning('First name length should be more than 8.')
+    if(!lastName || lastName.length == 0) {
+      NotificationManager.warning('Enter lastname.')
       return;
     }
+
+    if(!email || !email.match(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/)) {
+      NotificationManager.warning('Enter valid email.')
+      return;
+    }
+
     if(password != confirmPassword) {
       NotificationManager.warning('Password is not matched.')
       return;
@@ -125,16 +131,16 @@ function SignUp() {
 
       if (response.data.success) {
         NotificationManager.success('Sign up success.')
-        history.push('/admin/sign-in')
+        history.push('/auth/sign-in')
       } else {
         NotificationManager.error(response.data.msg)
-        history.push('/admin/sign-up')
+        history.push('/auth/sign-up')
       }
 
     }).catch(error => {
       NotificationManager.error('Sign up failed')
       console.log('login error', error)
-      history.push('/admin/sign-up')
+      history.push('/auth/sign-up')
     });
 
   }

@@ -111,7 +111,7 @@ export const TopUpDialog = ({ isOpen, handleClose }) => {
         }).then((result) => {
             if(!result || result && result.message) return;
             getOrganisations().then((response) => {
-                updateOrganisations(response.data.organisations || [])
+                updateOrganisations(response?.data?.organisations || [])
                 updateUser(response.data.user)
             })
         })

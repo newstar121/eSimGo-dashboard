@@ -56,7 +56,7 @@ exports.create = (req, res) => {
     const { firstName, lastName, email, country, password } = req.body;
 
     try {
-        const condition = { username: username };
+        const condition = { username: email };
         User.findOne({
             where: condition
         }).then(data => {
@@ -203,7 +203,7 @@ exports.findOneByUsernameAndPassword = (req, res) => {
                     jwt.sign(
                         payload,
                         keys.secretOrKey,
-                        { expiresIn: 3600 },
+                        { expiresIn: 3600 * 24 },
                         (err, token) => {
                             res.send({
                                 success: true,
