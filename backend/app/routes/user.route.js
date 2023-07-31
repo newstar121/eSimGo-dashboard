@@ -14,6 +14,8 @@ user.get('/get_plans', plans.findAll)
 user.get('/get_organisations', esims.getOrganisation)
 user.post('/create', users.create)
 
-user.get('get_billing', billing.findOne)
+user.get('/get_billing', billing.findOne)
+user.post('/save_billing', billing.update)
+user.post('/topup', billing.topup)
 
 module.exports = user;

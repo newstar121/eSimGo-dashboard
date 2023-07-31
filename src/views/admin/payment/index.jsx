@@ -8,6 +8,8 @@ import { MdAccountBalanceWallet, MdMap } from "react-icons/md";
 import { TopUpDialog } from "components/dialog/topUpDialog";
 import { BillingDialog } from "components/dialog/billingDialog"
 import { CountrySelect } from "components/selectOptions/country.component";
+import axios from "axios";
+import { API_BACKEND_URL } from "utils/constant";
 
 export default function Payment() {
 
@@ -20,36 +22,43 @@ export default function Payment() {
   const getOrganisation = () => {
 
     let organisations = state?.organisations || [];
-    let user = state?.user;
-    let userId = state?.user?.id;
-
-    let findIndex = organisations.findIndex((organisation) => {
-      let findUserIndex = organisation.users.findIndex((user) => user.id === userId)
-      return findUserIndex > -1;
-    })
-
-    if (findIndex > -1) {
-      return organisations[findIndex]
+    if (organisations && organisations.length > 0) {
+      return organisations[0]
     } else {
       return undefined
     }
+    // let user = state?.user;
+    // let userId = state?.user?.id;
+
+    // let findIndex = organisations.findIndex((organisation) => {
+    //   let findUserIndex = organisation.users.findIndex((user) => user.id === userId)
+    //   return findUserIndex > -1;
+    // })
+
+    // if (findIndex > -1) {
+    //   return organisations[findIndex]
+    // } else {
+    //   return undefined
+    // }
   }
 
   const organisation = getOrganisation();
 
-  const default_country = organisation?.country.toLowerCase() || ''
-  
+  const default_country = organisation?.country || ''
+
   const balance = organisation?.balance || 0;
-  const billingName = organisation ? organisation?.billingFirstNames + ' ' + organisation?.billingSurname : '';
-  const billingContentStr = organisation ? organisation?.billingAddr1 + ', ' + organisation?.billingAddr2
-    + ', ' + organisation?.billingCity + ', ' + organisation?.billingPostcode
-    + ', ' + organisation?.billingState + ', ' + organisation?.registeredCountry : '';
-  const billingContent = billingContentStr.replace(/,\s,/g, ",")
+  const billingName = organisation ? ((organisation?.billingFirstNames || '') + ' ' + (organisation?.billingSurname || '')) : 'Set your billing address';
+  const billingContentStr = organisation ? (organisation?.billingAddr1 || '') + ', ' + (organisation?.billingAddr2 || '')
+    + ', ' + (organisation?.billingCity || '') + ', ' + (organisation?.billingPostcode || '')
+    + ', ' + (organisation?.billingState || '') + ', ' + (organisation?.registeredCountry || '') : '';
+  const billingContent = billingContentStr.replace(/,\s,/g, ",") || ''
   const countryCode = organisation?.country || '';
-  const vatNo = organisation?.taxNumber.substring(countryCode.length)
+  const vatNo = organisation?.taxNumber?.substring(countryCode.length)
 
   const handleSave = () => {
-
+    // axios.post(
+    //   API_BACKEND_URL, + 'user/'
+    // )
   }
 
   const [isOpenTopUp, setOpenTopUp] = useState(false)
@@ -87,10 +96,10 @@ export default function Payment() {
               <Text fontSize='lg' fontWeight='700' mb='5px'>Country of Registration*</Text>
 
               <CountrySelect
-                select={country ? (default_country ? default_country : '')  : country}
+                select={country ? country : (default_country ? default_country : '')}
                 onSelect={onSelect}
               />
-              
+
             </Flex>
             <Flex justify='space-between'>
               <Flex direction='column' w='30%'>

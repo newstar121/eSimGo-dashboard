@@ -29,7 +29,6 @@ export const REGION_TYPE = {
     Europe: 'Europe',
     north: 'north',
     oceania: 'oceania',
-    africa: 'africa',
     south: 'south',
 }
 

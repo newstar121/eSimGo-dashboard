@@ -23,27 +23,32 @@ export function SidebarBrand() {
   const getOrganisation = () => {
 
     let organisations = state?.organisations || [];
-    let user = state?.user;
-    let userId = state?.user?.id;
-
-    let findIndex = organisations.findIndex((organisation) => {
-      let findUserIndex = organisation.users.findIndex((user) => user.id === userId)
-      return findUserIndex > -1;
-    })
-
-    if (findIndex > -1) {
-      return organisations[findIndex]
+    if (organisations && organisations.length > 0) {
+      return organisations[0]
     } else {
       return undefined
     }
+    // let user = state?.user;
+    // let userId = state?.user?.id;
+
+    // let findIndex = organisations.findIndex((organisation) => {
+    //   let findUserIndex = organisation.users.findIndex((user) => user.id === userId)
+    //   return findUserIndex > -1;
+    // })
+
+    // if (findIndex > -1) {
+    //   return organisations[findIndex]
+    // } else {
+    //   return undefined
+    // }
   }
 
   const organisation = getOrganisation();
-  
+
   const user = state?.user || ''
   const fullName = user ? user?.firstName + ' ' + user?.lastName : '';
 
-  const balance = organisation?.balance.toFixed(2) || 0;
+  const balance = organisation?.balance ? organisation.balance.toFixed(2) || 0 : 0;
 
   return (
     <Flex align='center' direction='column'>

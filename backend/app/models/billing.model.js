@@ -1,38 +1,41 @@
 const Constants = require("../../utils/constants");
 
 module.exports = (sequelize, Sequelize) => {
-    const User = sequelize.define("user", {
+    const Billing = sequelize.define("billing", {
         userId: {
             type: Sequelize.INTEGER
         },
-        country: {
-            type: Sequelize.STRING
-        },
-        countryCode: {
-            type: Sequelize.STRING
-        },
-        vatNo: {
+        taxNumber: {
             type: Sequelize.STRING
         },
         balance: {
             type: Sequelize.STRING
         },
-        firstName: {
+        billingFirstNames: {
             type: Sequelize.STRING
         },
-        lastName: {
+        billingSurname: {
             type: Sequelize.STRING
         },
-        address1: {
+        billingAddr1: {
             type: Sequelize.STRING
         },
-        address2: {
+        billingAddr2: {
             type: Sequelize.STRING
         },
-        city: {
+        billingCity: {
+            type: Sequelize.STRING
+        },
+        billingPostcode: {
+            type: Sequelize.STRING
+        },
+        billingState: {
+            type: Sequelize.STRING
+        },
+        registeredCountry: {
             type: Sequelize.STRING
         }
     });
 
-    return User;
+    return Billing;
 };

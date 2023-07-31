@@ -1,7 +1,7 @@
 const Constants = require("../../utils/constants");
 
 module.exports = (sequelize, Sequelize) => {
-    const User = sequelize.define("user", {
+    const Bag = sequelize.define("bag", {
         userId: {
             type: Sequelize.INTEGER
         },
@@ -10,5 +10,5 @@ module.exports = (sequelize, Sequelize) => {
         }
     });
 
-    return User;
+    return Bag;
 };

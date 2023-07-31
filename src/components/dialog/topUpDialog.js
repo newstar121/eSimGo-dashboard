@@ -6,6 +6,10 @@ import Cards from "react-credit-cards-2";
 import "react-credit-cards-2/dist/es/styles-compiled.css";
 import { getOrganisationBalance } from "contexts/AppContext";
 import { getOrganisations } from "contexts/AppContext";
+import { USER_ROLE } from "utils/constant";
+import jwt_decode from 'jwt-decode';
+import axios from "axios";
+import { API_BACKEND_URL } from "utils/constant";
 
 export const TopUpDialog = ({ isOpen, handleClose }) => {
 
@@ -34,32 +38,43 @@ export const TopUpDialog = ({ isOpen, handleClose }) => {
     const getOrganisation = () => {
 
         let organisations = state?.organisations || [];
-        let user = state?.user;
-        let userId = state?.user?.id;
-
-        let findIndex = organisations.findIndex((organisation) => {
-            let findUserIndex = organisation.users.findIndex((user) => user.id === userId)
-            return findUserIndex > -1;
-        })
-
-        if (findIndex > -1) {
-            return organisations[findIndex]
+        if (organisations && organisations.length > 0) {
+            return organisations[0]
         } else {
             return undefined
         }
+        // let user = state?.user;
+        // let userId = state?.user?.id;
+
+        // let findIndex = organisations.findIndex((organisation) => {
+        //     let findUserIndex = organisation.users.findIndex((user) => user.id === userId)
+        //     return findUserIndex > -1;
+        // })
+
+        // if (findIndex > -1) {
+        //     return organisations[findIndex]
+        // } else {
+        //     return undefined
+        // }
     }
 
     const organisation = getOrganisation();
 
-    const balance = organisation?.balance.toFixed(2) || 0;
-    const maxSpend = organisation?.maxSpend.toFixed(2) || 0.00;
-    const minimumSpend = organisation?.minimumSpend.toFixed(2) || 0.00;
-    const currentSpend = organisation?.currentSpend.toFixed(2) || 0.00;
+    const balance = organisation?.balance? organisation.balance.toFixed(2) || 0 : 0;
+    const maxSpend = organisation?.maxSpend?.toFixed(2) || 0.00;
+    const minimumSpend = organisation?.minimumSpend?.toFixed(2) || 0.00;
+    const currentSpend = organisation?.currentSpend?.toFixed(2) || 0.00;
     const billingName = organisation ? organisation?.billingFirstNames + ' ' + organisation?.billingSurname : '';
     const billingContentStr = organisation ? organisation?.billingAddr1 + ', ' + organisation?.billingAddr2
         + ', ' + organisation?.billingCity + ', ' + organisation?.billingPostcode
         + ', ' + organisation?.billingState + ', ' + organisation?.registeredCountry : '';
     const billingContent = billingContentStr.replace(/,\s,/g, ",")
+
+
+    const token = window.localStorage.getItem('token') ? window.localStorage.getItem('token').split(' ')[1] : '';
+    const decoded = jwt_decode(token) || '';
+
+    const role = decoded.role || USER_ROLE.user;
 
     const [currentTopUpSpend, setCurrentTopUpSpend] = useState(0)
 
@@ -78,9 +93,9 @@ export const TopUpDialog = ({ isOpen, handleClose }) => {
     });
 
     function handleCallback({ issuer }, isValid) {
-        
+
         if (isValid) {
-            setPayment(Object.assign({}, payment, {issuer: issuer}))
+            setPayment(Object.assign({}, payment, { issuer: issuer }))
         }
     }
 
@@ -99,22 +114,40 @@ export const TopUpDialog = ({ isOpen, handleClose }) => {
         if (currentTopUpSpend < minimumSpend) {
             return
         }
-        getOrganisationBalance({
-            amount: currentTopUpSpend,
-            browserScreenHeight: 500,
-            browserScreenWidth: 1092,
-            cardHolder: payment.name,
-            cardNumber: payment.number,
-            cardType: payment.issuer.toUpperCase(),
-            cv2: payment.cvc,
-            expiryDate: payment.expiry
-        }).then((result) => {
-            if(!result || result && result.message) return;
+        axios.post(
+            API_BACKEND_URL + 'user/topup',
+            {
+                topup: parseFloat(currentTopUpSpend)
+            },
+            {
+                headers: {
+                    Authorization: window.localStorage.getItem('token')
+                }
+            }
+        ).then((result) => {
             getOrganisations().then((response) => {
                 updateOrganisations(response?.data?.organisations || [])
                 updateUser(response.data.user)
             })
+        }).catch((error) => {
+            console.log('topup failed')
         })
+        // getOrganisationBalance({
+        //     amount: currentTopUpSpend,
+        //     browserScreenHeight: 500,
+        //     browserScreenWidth: 1092,
+        //     cardHolder: payment.name,
+        //     cardNumber: payment.number,
+        //     cardType: payment.issuer.toUpperCase(),
+        //     cv2: payment.cvc,
+        //     expiryDate: payment.expiry
+        // }).then((result) => {
+        //     if (!result || result && result.message) return;
+        //     getOrganisations().then((response) => {
+        //         updateOrganisations(response?.data?.organisations || [])
+        //         updateUser(response.data.user)
+        //     })
+        // })
     }
 
     return (
@@ -137,18 +170,23 @@ export const TopUpDialog = ({ isOpen, handleClose }) => {
                                 <Text color='green' fontSize='lg' fontWeight='700' ml='10px'>${balance}</Text>
                             </Flex>
                         </Flex>
-                        <Flex align='center' justify='space-between'>
+                        {role == USER_ROLE.company ? (
+                            <Flex align='center' justify='space-between'>
 
-                            <Text fontSize='lg' color='black' fontWeight='500'>
-                                Enter the details below to top up your account
-                            </Text>
-                            <Flex >
-                                <Text color='secondaryGray.600'>Daily Top-Up Limit:</Text>
-                                <Text color='green' fontSize='lg' fontWeight='700' ml='10px'>${currentSpend}</Text>
-                                <Text color='secondaryGray.600' ml='10px'>/</Text>
-                                <Text color='green' fontSize='lg' fontWeight='700' ml='10px'>${maxSpend}</Text>
+                                <Text fontSize='lg' color='black' fontWeight='500'>
+                                    Enter the details below to top up your account
+                                </Text>
+                                <Flex >
+                                    <Text color='secondaryGray.600'>Daily Top-Up Limit:</Text>
+                                    <Text color='green' fontSize='lg' fontWeight='700' ml='10px'>${currentSpend}</Text>
+                                    <Text color='secondaryGray.600' ml='10px'>/</Text>
+                                    <Text color='green' fontSize='lg' fontWeight='700' ml='10px'>${maxSpend}</Text>
+                                </Flex>
                             </Flex>
-                        </Flex>
+                        ) : (
+                            <></>
+                        )}
+
                     </Flex>
                     <Flex align='center' justify='center' ml='30px' mt='-15px'>
                         <ModalCloseButton focused="false" position='relative' size="25px" />
@@ -265,13 +303,13 @@ export const TopUpDialog = ({ isOpen, handleClose }) => {
                         <Flex justify='flex-end' w='100%'>
 
                             <Flex direction='column' w='fit-content'>
-                                <Text fontSize='md' fontWeight='500' color='black' mt='10px' textAlign='right'>VAT @ 20%</Text>
+                                <Text fontSize='md' fontWeight='500' color='black' mt='10px' textAlign='right'>{role == USER_ROLE.company ? 'VAT @ 20%' : 'VAT @ 25%'} </Text>
                                 <Text fontSize='md' fontWeight='500' color='black' mt='10px' textAlign='right'>Total</Text>
                                 <Text fontSize='md' fontWeight='500' color='black' mt='10px' textAlign='right'>New Balance</Text>
                             </Flex>
                             <Flex direction='column' w='fit-content' justify='flex-end' ml='50px'>
-                                <Text fontSize='md' fontWeight='500' color='black' mt='10px' textAlign='right'>{currentTopUpSpend > 0 ? ((parseFloat(balance) + parseFloat(currentTopUpSpend)) * 0.2).toFixed(2) : 0}</Text>
-                                <Text fontSize='md' fontWeight='500' color='black' mt='10px' textAlign='right'>{currentTopUpSpend > 0 ? ((parseFloat(balance) + parseFloat(currentTopUpSpend)) * 0.8).toFixed(2) : 0}</Text>
+                                <Text fontSize='md' fontWeight='500' color='black' mt='10px' textAlign='right'>{currentTopUpSpend > 0 ? ((parseFloat(balance) + parseFloat(currentTopUpSpend)) * (role == USER_ROLE.company ? 0.2 : 0.25)).toFixed(2) : 0}</Text>
+                                <Text fontSize='md' fontWeight='500' color='black' mt='10px' textAlign='right'>{currentTopUpSpend > 0 ? ((parseFloat(balance) + parseFloat(currentTopUpSpend)) * (role == USER_ROLE.company ? 0.8 : 0.75)).toFixed(2) : 0}</Text>
                                 <Text fontSize='md' fontWeight='500' color='black' mt='10px' textAlign='right'>{currentTopUpSpend > 0 ? (parseFloat(balance) + parseFloat(currentTopUpSpend)).toFixed(2) : balance}</Text>
                             </Flex>
                         </Flex>

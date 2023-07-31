@@ -1,11 +1,12 @@
 import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Flex, Text, Button, useDisclosure, SimpleGrid, Input, Icon, Image } from "@chakra-ui/react";
 import { useGlobalData } from "contexts/AppContext";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { MdPerson } from "react-icons/md";
 import axios from "axios";
 import { API_URL } from "utils/constant";
 import { getOrganisations } from "contexts/AppContext";
 import { API_KEY } from "utils/constant";
+import { API_BACKEND_URL } from "utils/constant";
 
 export const BillingDialog = ({ isOpen, handleClose }) => {
 
@@ -34,19 +35,24 @@ export const BillingDialog = ({ isOpen, handleClose }) => {
     const getOrganisation = () => {
 
         let organisations = state?.organisations || [];
-        let user = state?.user;
-        let userId = state?.user?.id;
-
-        let findIndex = organisations.findIndex((organisation) => {
-            let findUserIndex = organisation.users.findIndex((user) => user.id === userId)
-            return findUserIndex > -1;
-        })
-
-        if (findIndex > -1) {
-            return organisations[findIndex]
+        if (organisations && organisations.length > 0) {
+            return organisations[0]
         } else {
             return undefined
         }
+        // let user = state?.user;
+        // let userId = state?.user?.id;
+
+        // let findIndex = organisations.findIndex((organisation) => {
+        //     let findUserIndex = organisation.users.findIndex((user) => user.id === userId)
+        //     return findUserIndex > -1;
+        // })
+
+        // if (findIndex > -1) {
+        //     return organisations[findIndex]
+        // } else {
+        //     return undefined
+        // }
     }
 
     const organisation = getOrganisation();
@@ -57,71 +63,28 @@ export const BillingDialog = ({ isOpen, handleClose }) => {
     const city = organisation?.billingCity || ''
     const postcode = organisation?.billingPostcode || ''
     const country = organisation?.country || ''
-    const groups = organisation?.groups || []
-    const id = organisation?.id || ''
-    // const countryName = state?.countries?.countries[country.toLowerCase()] || ''
+
+    const [_firstName, setFirstName] = useState()
+    const [_lastName, setLastName] = useState()
+    const [_address1, setAddress1] = useState()
+    const [_address2, setAddress2] = useState()
+    const [_city, setCity] = useState()
+    const [_postcode, setPostCode] = useState()
 
     const onSave = () => {
-        axios.put(
-            API_URL + 'organisations',
+        axios.post(
+            API_BACKEND_URL + 'user/save_billing',
             {
-                accountManager: null,
-                addr1: null,
-                addr2: null,
-                allowRefunds: null,
-                apiMaxBurst: null,
-                apiTokenReplenishAmount: null,
-                apiTokenReplenishTimeSeconds: null,
-                apiTokensPerCall: null,
-                autoTopupAmount: null,
-                balance: null,
-                balanceNotificationEmails: null,
-                balanceReason: null,
-                billingAddr1: address1,
-                billingAddr2: address2,
-                billingCity: city,
-                billingEmail: null,
-                billingFirstNames: firstName,
-                billingPhone: null,
-                billingPostcode: postcode,
-                billingState: "",
-                billingSurname: lastName,
-                businessType: null,
-                callbackUrl: null,
-                callbackVersion: null,
-                city: null,
-                closedDate: null,
-                country: null,
-                currency: null,
-                customTerms: null,
-                groups: groups,
-                id: id || '',
-                isAdmin: null,
-                isClosedDown: null,
-                isOnboarded: null,
-                isPrepaid: null,
-                maxSpend: null,
-                maximumRefundPeriod: null,
-                minimumBalance: null,
-                minimumSpend: null,
-                name: "Clowdnet Services Ltd",
-                notes: null,
-                orgBalanceThreshold: null,
-                postcode: null,
-                productDescription: null,
-                registeredCountry: country,
-                secondStageValidation: null,
-                secondStageValidationComplete: null,
-                sendBillingUpdateEmail: null,
-                suspendPayments: null,
-                taxNumber: null,
-                tradingName: null,
-                website: null
+                billingAddr1: _address1,
+                billingAddr2: _address2,
+                billingCity: _city,
+                billingFirstNames: _firstName,
+                billingPostcode: _postcode,
+                billingSurname: _lastName,
             },
             {
                 headers: {
-                    'X-API-Key': API_KEY,
-                    Authorization: 'Bearer ' + window.localStorage.getItem('refreshToken')
+                    Authorization: window.localStorage.getItem('token')
                 }
             }
         ).then(() => {
@@ -160,7 +123,8 @@ export const BillingDialog = ({ isOpen, handleClose }) => {
 
                                 <Input
                                     defaultValue={firstName}
-
+                                    value={_firstName ? _firstName : firstName}
+                                    onChange={(e) => setFirstName(e.target.value)}
                                     variant='auth'
                                     fontSize='lg'
                                     ms={{ base: "0px", md: "0px" }}
@@ -173,7 +137,8 @@ export const BillingDialog = ({ isOpen, handleClose }) => {
 
                                 <Input
                                     defaultValue={lastName}
-
+                                    value={_lastName ? _lastName : lastName}
+                                    onChange={(e) => setLastName(e.target.value)}
                                     variant='auth'
                                     fontSize='lg'
                                     ms={{ base: "0px", md: "0px" }}
@@ -188,7 +153,8 @@ export const BillingDialog = ({ isOpen, handleClose }) => {
 
                             <Input
                                 defaultValue={address1}
-
+                                value={_address1 ? _address1 : address1}
+                                onChange={(e) => setAddress1(e.target.value)}
                                 variant='auth'
                                 fontSize='lg'
                                 ms={{ base: "0px", md: "0px" }}
@@ -202,7 +168,8 @@ export const BillingDialog = ({ isOpen, handleClose }) => {
 
                             <Input
                                 defaultValue={address2}
-
+                                value={_address2 ? _address2 : address2}
+                                onChange={(e) => setAddress2(e.target.value)}
                                 variant='auth'
                                 fontSize='lg'
                                 ms={{ base: "0px", md: "0px" }}
@@ -217,7 +184,8 @@ export const BillingDialog = ({ isOpen, handleClose }) => {
 
                                 <Input
                                     defaultValue={city}
-
+                                    value={_city ? _city : city}
+                                    onChange={(e) => setCity(e.target.value)}
                                     variant='auth'
                                     fontSize='lg'
                                     ms={{ base: "0px", md: "0px" }}
@@ -230,7 +198,8 @@ export const BillingDialog = ({ isOpen, handleClose }) => {
 
                                 <Input
                                     defaultValue={postcode}
-
+                                    value={_postcode ? _postcode : postcode}
+                                    onChange={(e) => setPostCode(e.target.value)}
                                     variant='auth'
                                     fontSize='lg'
                                     ms={{ base: "0px", md: "0px" }}
@@ -242,10 +211,13 @@ export const BillingDialog = ({ isOpen, handleClose }) => {
                         </SimpleGrid>
                         <Flex direction='column' w='100%'>
                             <Text fontSize='lg' fontWeight='700' mb='5px'>Registered Country*</Text>
-                            <Flex align='center'>
-                                <Image src={'https://portal.esim-go.com/assets/packages/intl_phone_number_input/assets/flags/' + country.toLowerCase() + '.png'} w='60px' h='40px' alt='flag' />
-                                <Text ml='10px'>{country}</Text>
-                            </Flex>
+                            {country && country.length > 0 ? (
+                                <Flex align='center'>
+                                    <Image src={'https://portal.esim-go.com/assets/packages/intl_phone_number_input/assets/flags/' + country.toLowerCase() + '.png'} w='60px' h='40px' alt='flag' />
+                                    <Text ml='10px'>{country}</Text>
+                                </Flex>
+                            ) : (<>
+                            </>)}
                         </Flex>
                     </Flex>
 
